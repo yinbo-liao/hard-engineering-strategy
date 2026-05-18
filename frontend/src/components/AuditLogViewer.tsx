@@ -1,10 +1,9 @@
-import { useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { History } from "lucide-react";
-import { useAuditLogFetcher } from "../hooks/useAuditLog";
 import { formatDate } from "../utils/formatters";
 
 interface AuditLogViewerProps {
-  taskId: string | null;
+  taskId?: string | null;
   maxEntries?: number;
 }
 
@@ -15,19 +14,34 @@ const riskColors: Record<string, string> = {
   critical: "text-red-500",
 };
 
-export function AuditLogViewer({ taskId, maxEntries = 50 }: AuditLogViewerProps) {
-  const { entries, loading, fetchLog } = useAuditLogFetcher({
-    sessionId: taskId ?? undefined,
-    limit: maxEntries,
-  });
+export function AuditLogViewer({ maxEntries = 50 }: AuditLogViewerProps) {
+  const [entries, setEntries] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchLog = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/v1/harness/audit?limit=${maxEntries}`);
+      if (res.ok) {
+        const data = await res.json();
+        setEntries(data.entries || []);
+      }
+    } catch {} finally {
+      setLoading(false);
+    }
+  }, [maxEntries]);
 
   useEffect(() => {
     fetchLog();
+    const interval = setInterval(fetchLog, 3000);
+    return () => clearInterval(interval);
   }, [fetchLog]);
 
   return (
     <div>
-      {loading && <p className="text-xs text-gray-400">Loading audit log...</p>}
+      {loading && entries.length === 0 && (
+        <p className="text-xs text-gray-400">Loading audit log...</p>
+      )}
 
       {!loading && entries.length === 0 && (
         <div className="text-center py-6 text-gray-400 dark:text-gray-500">
@@ -38,13 +52,13 @@ export function AuditLogViewer({ taskId, maxEntries = 50 }: AuditLogViewerProps)
 
       {entries.length > 0 && (
         <div className="space-y-1 max-h-[300px] overflow-y-auto">
-          {entries.map((entry) => (
+          {entries.map((entry, i) => (
             <div
-              key={entry.entryId}
+              key={entry.entry_id || i}
               className="flex items-center gap-2 py-1.5 px-2 rounded text-xs border-b border-gray-100 dark:border-gray-800 last:border-0"
             >
-              <span className={`font-medium w-12 shrink-0 ${riskColors[entry.riskLevel] ?? "text-gray-500"}`}>
-                {entry.riskLevel.toUpperCase()}
+              <span className={`font-medium w-12 shrink-0 ${riskColors[entry.risk_level] ?? "text-gray-500"}`}>
+                {(entry.risk_level || "low").toUpperCase()}
               </span>
               <span className="truncate flex-1 font-medium text-gray-700 dark:text-gray-300">
                 {entry.action}

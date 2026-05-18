@@ -71,10 +71,11 @@ class RBACMiddleware(BaseHTTPMiddleware):
         }
 
     async def dispatch(self, request: Request, call_next):
-        if request.url.path in self.exempt_paths:
+        path = request.url.path
+        if path in self.exempt_paths or any(path.startswith(p) for p in self.exempt_paths if len(p) > 20):
             return await call_next(request)
 
-        if request.url.path.startswith("/ws"):
+        if path.startswith("/ws"):
             return await call_next(request)
 
         auth_header = request.headers.get("Authorization", "")

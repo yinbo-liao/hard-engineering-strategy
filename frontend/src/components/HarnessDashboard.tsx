@@ -13,6 +13,7 @@ import { ApprovalQueue } from "./ApprovalQueue";
 import { AuditLogViewer } from "./AuditLogViewer";
 import { AgentLoopVisualizer } from "./AgentLoopVisualizer";
 import { EvaluationResults } from "./EvaluationResults";
+import { CodeOutput } from "./CodeOutput";
 import { ConnectionStatus } from "./ConnectionStatus";
 import { SystemMetricsBadge } from "./SystemMetricsBadge";
 import { UserMenu } from "./UserMenu";
@@ -25,18 +26,14 @@ function getAuthToken(): string {
   return localStorage.getItem("harness_auth_token") || "";
 }
 
-function ensureAuthToken() {
-  if (!localStorage.getItem("harness_auth_token")) {
-    localStorage.setItem("harness_auth_token", DEFAULT_TOKEN);
-  }
+// Set auth token immediately (before any component renders)
+if (!localStorage.getItem("harness_auth_token")) {
+  localStorage.setItem("harness_auth_token", DEFAULT_TOKEN);
 }
 
 export function HarnessDashboard() {
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"tasks" | "approvals">("tasks");
-  const [authReady, setAuthReady] = useState(!!localStorage.getItem("harness_auth_token"));
-
-  useEffect(() => { ensureAuthToken(); setAuthReady(true); }, []);
 
   const {
     tasks,
@@ -49,7 +46,7 @@ export function HarnessDashboard() {
     updateMetrics,
   } = useHarnessStore();
 
-  const wsUrl = `ws://${import.meta.env.VITE_WS_URL?.replace("ws://", "") || "localhost:8000"}/api/v1/harness/ws/main`;
+  const wsUrl = `ws://127.0.0.1:8000/api/v1/harness/ws/main`;
   const { lastMessage, sendMessage, connectionStatus } = useWebSocket(wsUrl);
 
   useEffect(() => {
@@ -104,12 +101,60 @@ export function HarnessDashboard() {
     [updateTask, addApproval, removeApproval, updateMetrics]
   );
 
+  // Poll task list + selected task status every 2s
+  useEffect(() => {
+    const poll = async () => {
+      try {
+        const res = await fetch("/api/v1/harness/tasks");
+        if (res.ok) {
+          const data = await res.json();
+          for (const t of data.tasks || []) {
+            updateTask(t.task_id, {
+              status: t.status,
+              description: t.description,
+              type: t.type,
+            } as Partial<Task>);
+          }
+          updateMetrics({
+            activeTasks: data.tasks.filter((t: any) => t.status === "running").length,
+            queuedTasks: data.tasks.filter((t: any) => t.status === "pending").length,
+            completedTasks: data.tasks.filter((t: any) => t.status === "completed").length,
+          });
+        }
+        if (selectedTask) {
+          const detail = await fetch(`/api/v1/harness/tasks/${selectedTask}`);
+          if (detail.ok) {
+            const d = await detail.json();
+            const r = (d.result && typeof d.result === "object") ? d.result : {};
+            const ev = (r && typeof r === "object") ? (r.evaluation || {}) : {};
+            updateTask(selectedTask, {
+              status: d.status,
+              description: d.description,
+              type: d.type,
+              result: d.result,
+              errorLog: d.error_log || [],
+              currentIteration: (typeof r.iterations === "number") ? r.iterations : 0,
+              maxIterations: 5,
+              currentPhase: d.status === "completed" ? "task_completed"
+                : d.status === "running" ? (r.iterations === 0 ? "phase_reasoning" : "phase_action")
+                : undefined,
+              progress: ev.weighted_score ? Math.round(ev.weighted_score * 100) : d.status === "completed" ? 100 : 20,
+            } as Partial<Task>);
+          }
+        }
+      } catch {}
+    };
+    poll();
+    const interval = setInterval(poll, 2000);
+    return () => clearInterval(interval);
+  }, [updateTask, updateMetrics, selectedTask]);
+
   const handleSubmitTask = async (description: string, taskType: string) => {
     const taskId = `task_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/api/v1/harness/tasks`,
+        "/api/v1/harness/tasks",
         {
           method: "POST",
           headers: {
@@ -173,7 +218,6 @@ export function HarnessDashboard() {
             <ConnectionStatus status={connectionStatus} />
           </div>
           <div className="flex items-center space-x-4">
-            {!authReady && <span className="text-xs text-amber-500">Setting up auth...</span>}
             <SystemMetricsBadge metrics={systemMetrics} />
             <UserMenu />
           </div>
@@ -231,6 +275,11 @@ export function HarnessDashboard() {
               className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
             />
 
+            <CodeOutput
+              taskId={selectedTask}
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
+            />
+
             <EvaluationResults
               taskId={selectedTask}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
@@ -241,7 +290,7 @@ export function HarnessDashboard() {
                 <History className="w-5 h-5" />
                 Audit Trail
               </h2>
-              <AuditLogViewer taskId={selectedTask} maxEntries={50} />
+              <AuditLogViewer maxEntries={50} />
             </section>
           </div>
         </div>

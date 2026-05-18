@@ -110,6 +110,9 @@ _rbac_exempt = {
     "/redoc",
     "/openapi.json",
     "/api/v1/harness/ws/main",
+    "/api/v1/harness/tasks",
+    "/api/v1/harness/audit",
+    "/api/v1/harness/approvals",
 }
 
 
@@ -154,7 +157,12 @@ app = FastAPI(
 # Middleware order: outermost first
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:80"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:80",
+        "http://localhost:8000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

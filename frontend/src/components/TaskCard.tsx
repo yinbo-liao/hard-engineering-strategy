@@ -11,7 +11,8 @@ interface TaskCardProps {
 export function TaskCard({ task, selected, onSelect }: TaskCardProps) {
   return (
     <button
-      onClick={() => onSelect(task.id)}
+      type="button"
+      onClick={(e) => { e.preventDefault(); onSelect(task.id); }}
       className={`w-full text-left p-4 rounded-lg border transition-colors ${
         selected
           ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
