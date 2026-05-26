@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "=== Harness Engineering — Development Setup ==="
+echo "=== Hardness Engineering — Development Setup ==="
 
 # Backend
 echo "[1/4] Setting up Python virtual environment..."
@@ -42,4 +42,4 @@ echo ""
 echo "=== Setup complete ==="
 echo "Backend:  cd backend && source .venv/bin/activate && uvicorn backend.app.main:app --reload"
 echo "Frontend: cd frontend && npm run dev"
-echo "Docker:   docker-compose -f docker-compose.harness.yml up"
+echo "Docker:   docker-compose -f docker-compose.Hardness.yml up"

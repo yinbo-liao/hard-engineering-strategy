@@ -56,7 +56,7 @@ class MCPClient:
             {
                 "protocol_version": "2024-11-05",
                 "capabilities": {"tools": {}, "resources": {}},
-                "client_info": {"name": "harness-orchestrator", "version": "1.0.0"},
+                "client_info": {"name": "Hardness-orchestrator", "version": "1.0.0"},
             },
         )
         self._initialized = True

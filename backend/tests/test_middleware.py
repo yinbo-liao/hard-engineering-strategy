@@ -2,7 +2,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from backend.app.harness.middleware import RateLimitMiddleware, RBACMiddleware, require_permission
+from backend.app.hardness.middleware import RateLimitMiddleware, RBACMiddleware, require_permission
 
 
 class TestRateLimitMiddleware:

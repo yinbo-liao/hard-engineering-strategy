@@ -1,4 +1,4 @@
-import type { Task } from "../types/harness";
+import type { Task } from "../types/hardness";
 import { TaskCard } from "./TaskCard";
 
 interface TaskListProps {

@@ -1,5 +1,5 @@
 import { Activity } from "lucide-react";
-import type { SystemMetrics } from "../types/harness";
+import type { SystemMetrics } from "../types/hardness";
 
 export function SystemMetricsBadge({ metrics }: { metrics: SystemMetrics }) {
   return (

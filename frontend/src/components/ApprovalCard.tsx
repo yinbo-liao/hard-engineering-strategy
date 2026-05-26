@@ -1,5 +1,5 @@
 import { Check, X, ShieldAlert } from "lucide-react";
-import type { ApprovalRequest } from "../types/harness";
+import type { ApprovalRequest } from "../types/hardness";
 import { formatDate } from "../utils/formatters";
 
 const riskColors: Record<string, string> = {

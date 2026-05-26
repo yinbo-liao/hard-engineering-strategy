@@ -1,5 +1,5 @@
 import { Code2, FileText } from "lucide-react";
-import { useTask } from "../hooks/useHarnessState";
+import { useTask } from "../hooks/useHardnessState";
 
 interface CodeOutputProps {
   taskId: string | null;

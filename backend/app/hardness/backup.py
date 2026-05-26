@@ -1,5 +1,5 @@
 """
-Database backup and recovery routines for the Harness Control Plane.
+Database backup and recovery routines for the Hardness Control Plane.
 
 Supports:
 - Full pg_dump backup
@@ -22,7 +22,7 @@ class BackupResult:
     success: bool
     path: str = ""
     size_bytes: int = 0
-    database: str = "harness"
+    database: str = "Hardness"
     started_at: str = ""
     completed_at: str = ""
     error: Optional[str] = None
@@ -31,14 +31,14 @@ class BackupResult:
 
 class BackupManager:
     """
-    Manages PostgreSQL backups for the harness database.
+    Manages PostgreSQL backups for the Hardness database.
 
     Retention policy: keep 7 daily, 4 weekly, 3 monthly
     """
 
     def __init__(
         self,
-        database_url: str = "postgresql://harness:harness@localhost:5432/harness",
+        database_url: str = "postgresql://Hardness:Hardness@localhost:5432/Hardness",
         backup_dir: str = "/data/backups",
     ):
         self.database_url = database_url
@@ -51,17 +51,17 @@ class BackupManager:
         if "@" in url:
             creds, hostpart = url.split("@")
             self.user, self.password = creds.split(":") if ":" in creds else (creds, "")
-            host_port, self.dbname = hostpart.split("/") if "/" in hostpart else (hostpart, "harness")
+            host_port, self.dbname = hostpart.split("/") if "/" in hostpart else (hostpart, "Hardness")
             self.host, self.port = host_port.split(":") if ":" in host_port else (host_port, "5432")
         else:
-            self.host, self.port, self.dbname = "localhost", "5432", "harness"
+            self.host, self.port, self.dbname = "localhost", "5432", "Hardness"
 
     async def create_full_backup(self, label: str = "") -> BackupResult:
         os.makedirs(self.backup_dir, exist_ok=True)
         timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
-        filename = f"harness_backup_{timestamp}.sql.gz"
+        filename = f"Hardness_backup_{timestamp}.sql.gz"
         if label:
-            filename = f"harness_backup_{label}_{timestamp}.sql.gz"
+            filename = f"Hardness_backup_{label}_{timestamp}.sql.gz"
         filepath = os.path.join(self.backup_dir, filename)
 
         env = os.environ.copy()
@@ -165,7 +165,7 @@ class BackupManager:
 
         for filename in os.listdir(self.backup_dir):
             filepath = os.path.join(self.backup_dir, filename)
-            if not filename.startswith("harness_backup_"):
+            if not filename.startswith("Hardness_backup_"):
                 continue
             mtime = datetime.utcfromtimestamp(os.path.getmtime(filepath))
             if mtime < cutoff:
@@ -180,7 +180,7 @@ class BackupManager:
 
         backups = []
         for filename in sorted(os.listdir(self.backup_dir), reverse=True):
-            if filename.startswith("harness_backup_"):
+            if filename.startswith("Hardness_backup_"):
                 filepath = os.path.join(self.backup_dir, filename)
                 backups.append({
                     "filename": filename,

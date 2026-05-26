@@ -1,13 +1,13 @@
 {
-  "title": "Harness Control Plane - Overview",
-  "uid": "harness-overview",
+  "title": "Hardness Control Plane - Overview",
+  "uid": "Hardness-overview",
   "panels": [
     {
       "title": "Active Tasks",
       "type": "stat",
       "targets": [
         {
-          "expr": "harness_tasks_active",
+          "expr": "Hardness_tasks_active",
           "legendFormat": "Active"
         }
       ],
@@ -18,7 +18,7 @@
       "type": "stat",
       "targets": [
         {
-          "expr": "harness_tasks_completed_total",
+          "expr": "Hardness_tasks_completed_total",
           "legendFormat": "Completed"
         }
       ],
@@ -29,7 +29,7 @@
       "type": "stat",
       "targets": [
         {
-          "expr": "harness_tasks_failed_total",
+          "expr": "Hardness_tasks_failed_total",
           "legendFormat": "Failed"
         }
       ],
@@ -40,7 +40,7 @@
       "type": "timeseries",
       "targets": [
         {
-          "expr": "harness_task_duration_seconds",
+          "expr": "Hardness_task_duration_seconds",
           "legendFormat": "{{quantile}}"
         }
       ],
@@ -51,7 +51,7 @@
       "type": "timeseries",
       "targets": [
         {
-          "expr": "harness_approvals_pending",
+          "expr": "Hardness_approvals_pending",
           "legendFormat": "Pending"
         }
       ],
@@ -62,7 +62,7 @@
       "type": "timeseries",
       "targets": [
         {
-          "expr": "harness_cost_total",
+          "expr": "Hardness_cost_total",
           "legendFormat": "Cost ($)"
         }
       ],
@@ -73,7 +73,7 @@
       "type": "timeseries",
       "targets": [
         {
-          "expr": "harness_loop_iterations",
+          "expr": "Hardness_loop_iterations",
           "legendFormat": "Iterations"
         }
       ],

@@ -52,7 +52,7 @@ class SlackNotificationService(NotificationService):
                         {"title": k, "value": str(v)[:200], "short": True}
                         for k, v in notification.payload.items()
                     ],
-                    "footer": f"Harness Control Plane · {notification.timestamp}",
+                    "footer": f"Hardness Control Plane · {notification.timestamp}",
                 }
             ]
         }
@@ -86,10 +86,10 @@ class EmailNotificationService(NotificationService):
             "plain",
         )
         msg["Subject"] = (
-            f"[Harness] {notification.type.upper()} — "
+            f"[Hardness] {notification.type.upper()} — "
             f"{notification.priority.upper()} Priority"
         )
-        msg["From"] = "harness@localhost"
+        msg["From"] = "Hardness@localhost"
         msg["To"] = "operator@localhost"
 
         loop = asyncio.get_event_loop()

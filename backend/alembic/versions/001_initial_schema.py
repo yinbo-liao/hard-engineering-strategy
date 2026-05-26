@@ -1,4 +1,4 @@
-"""Initial schema — harness core tables with pgvector
+"""Initial schema — Hardness core tables with pgvector
 
 Revision ID: 001
 Revises: None
@@ -21,7 +21,7 @@ def upgrade() -> None:
     op.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
 
     op.create_table(
-        "harness_tasks",
+        "Hardness_tasks",
         sa.Column("id", sa.String(64), primary_key=True),
         sa.Column("description", sa.String(1024), nullable=False),
         sa.Column("task_type", sa.String(32), nullable=False, server_default="code"),
@@ -56,7 +56,7 @@ def upgrade() -> None:
     )
 
     op.create_table(
-        "harness_checkpoints",
+        "Hardness_checkpoints",
         sa.Column("id", sa.String(64), primary_key=True),
         sa.Column("task_id", sa.String(64), nullable=False, index=True),
         sa.Column("state", sa.JSON(), nullable=False),
@@ -73,12 +73,12 @@ def upgrade() -> None:
     )
     op.create_index(
         "idx_checkpoints_task",
-        "harness_checkpoints",
+        "Hardness_checkpoints",
         ["task_id", sa.text("created_at DESC")],
     )
 
     op.create_table(
-        "harness_events",
+        "Hardness_events",
         sa.Column("event_id", sa.String(64), primary_key=True),
         sa.Column("task_id", sa.String(64), nullable=False, index=True),
         sa.Column("type", sa.String(32), nullable=False),
@@ -94,12 +94,12 @@ def upgrade() -> None:
     )
     op.create_index(
         "idx_events_task_sequence",
-        "harness_events",
+        "Hardness_events",
         ["task_id", "sequence"],
     )
 
     op.create_table(
-        "harness_audit_log",
+        "Hardness_audit_log",
         sa.Column("entry_id", sa.String(64), primary_key=True),
         sa.Column("session_id", sa.String(64), nullable=False, index=True),
         sa.Column("action", sa.String(128), nullable=False),
@@ -136,8 +136,8 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_table("code_embeddings")
-    op.drop_table("harness_audit_log")
-    op.drop_table("harness_events")
-    op.drop_table("harness_checkpoints")
-    op.drop_table("harness_tasks")
+    op.drop_table("Hardness_audit_log")
+    op.drop_table("Hardness_events")
+    op.drop_table("Hardness_checkpoints")
+    op.drop_table("Hardness_tasks")
     op.execute("DROP TYPE IF EXISTS taskstatus")

@@ -20,13 +20,13 @@ route:
 receivers:
   - name: "default"
     webhook_configs:
-      - url: "http://harness-orchestrator:8000/api/v1/harness/alerts/webhook"
+      - url: "http://Hardness-orchestrator:8000/api/v1/Hardness/alerts/webhook"
         send_resolved: true
 
   - name: "critical-slack"
     slack_configs:
       - api_url: "${SLACK_WEBHOOK_URL}"
-        channel: "#harness-alerts"
+        channel: "#Hardness-alerts"
         title: "[{{ .Status | toUpper }}] {{ .GroupLabels.alertname }}"
         text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
         send_resolved: true

@@ -1,15 +1,15 @@
 import pytest
-from backend.app.harness.evaluator import (
+from backend.app.hardness.evaluator import (
     Evaluator,
     EvaluationDimension,
     DimensionResult,
 )
-from backend.app.harness.tool_registry import (
+from backend.app.hardness.tool_registry import (
     ToolRegistry,
     ToolSchema,
     PermissionLevel,
 )
-from backend.app.harness.planner import TaskNode
+from backend.app.hardness.planner import TaskNode
 
 
 class TestDimensionResult:

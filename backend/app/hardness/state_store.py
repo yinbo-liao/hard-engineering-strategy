@@ -7,7 +7,7 @@ from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.models.checkpoint import Checkpoint
-from backend.app.models.event import HarnessEvent
+from backend.app.models.event import HardnessEvent
 
 
 class StateStore:
@@ -42,7 +42,7 @@ class StateStore:
             state_hash=state_hash,
             task_status=task_status,
             error_log=error_log or [],
-            metadata=metadata or {},
+            checkpoint_metadata=metadata or {},
         )
         self.session.add(checkpoint)
         await self.session.flush()
@@ -69,17 +69,17 @@ class StateStore:
 
     async def append_event(
         self, task_id: str, event_type: str, data: dict
-    ) -> HarnessEvent:
+    ) -> HardnessEvent:
         max_seq_result = await self.session.execute(
             text(
-                "SELECT COALESCE(MAX(sequence), -1) FROM harness_events "
+                "SELECT COALESCE(MAX(sequence), -1) FROM Hardness_events "
                 "WHERE task_id = :tid"
             ),
             {"tid": task_id},
         )
         next_seq = max_seq_result.scalar() + 1
 
-        event = HarnessEvent(
+        event = HardnessEvent(
             task_id=task_id,
             type=event_type,
             data=data,
@@ -94,14 +94,14 @@ class StateStore:
         task_id: str,
         from_sequence: int = 0,
         limit: int = 100,
-    ) -> List[HarnessEvent]:
+    ) -> List[HardnessEvent]:
         result = await self.session.execute(
-            select(HarnessEvent)
+            select(HardnessEvent)
             .where(
-                HarnessEvent.task_id == task_id,
-                HarnessEvent.sequence >= from_sequence,
+                HardnessEvent.task_id == task_id,
+                HardnessEvent.sequence >= from_sequence,
             )
-            .order_by(HarnessEvent.sequence)
+            .order_by(HardnessEvent.sequence)
             .limit(limit)
         )
         return list(result.scalars().all())

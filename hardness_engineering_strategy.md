@@ -1,4 +1,4 @@
-# Harness Engineering Strategy: Full-Scope Implementation Guide
+# Hardness Engineering Strategy: Full-Scope Implementation Guide
 
 ## FastAPI + Node.js + Vite Web Application with Claude Code Integration
 
@@ -9,7 +9,7 @@
 1. [Executive Summary](#1-executive-summary)
 2. [Strategic Overview](#2-strategic-overview)
 3. [Architecture Blueprint](#3-architecture-blueprint)
-4. [Harness Core: Control Plane](#4-harness-core-control-plane)
+4. [Hardness Core: Control Plane](#4-Hardness-core-control-plane)
 5. [Security & Governance](#5-security--governance)
 6. [Orchestrator: Claude Code Integration](#6-orchestrator-claude-code-integration)
 7. [Quality Assurance: Evaluator](#7-quality-assurance-evaluator)
@@ -23,11 +23,11 @@
 
 ## 1. Executive Summary
 
-This document presents a comprehensive strategy for building a **Harness Engineering** system that transforms Claude Code from an interactive coding assistant into a **managed, governable, and recoverable agent** within a production-grade software engineering environment.
+This document presents a comprehensive strategy for building a **Hardness Engineering** system that transforms Claude Code from an interactive coding assistant into a **managed, governable, and recoverable agent** within a production-grade software engineering environment.
 
 ### Core Philosophy
 
-> **"The system (Harness) determines the upper bound of capability, not the model."**
+> **"The system (Hardness) determines the upper bound of capability, not the model."**
 
 Software engineering is evolving from "humans writing code" to "humans designing systems that enable AI agents to generate and evolve code autonomously, safely, and efficiently."
 
@@ -58,9 +58,9 @@ Traditional AI coding assistants face critical limitations in production environ
 - **No quality gates**: Generated code lacks systematic validation
 - **No audit trail**: Actions cannot be traced or reviewed
 
-### 2.2 Solution: The Harness Architecture
+### 2.2 Solution: The Hardness Architecture
 
-The Harness Engineering approach treats the AI agent as an **operating system process** that requires:
+The Hardness Engineering approach treats the AI agent as an **operating system process** that requires:
 
 1. **Scheduling** (Task Planner with DAG)
 2. **Memory** (Context Manager + State Store)
@@ -73,7 +73,7 @@ The Harness Engineering approach treats the AI agent as an **operating system pr
 
 The system consists of three main layers:
 
-**Control Plane** (Harness Core):
+**Control Plane** (Hardness Core):
 - Task Planner with DAG dependency management
 - Context Manager with token budget optimization
 - Governance & Audit system with human-in-the-loop
@@ -133,7 +133,7 @@ User Request
 
 ---
 
-## 4. Harness Core: Control Plane
+## 4. Hardness Core: Control Plane
 
 ### 4.1 Task Planner (DAG-Based)
 
@@ -147,7 +147,7 @@ User Request
 #### 4.1.2 Core Implementation
 
 ```python
-# backend/app/harness/planner.py
+# backend/app/Hardness/planner.py
 from typing import Dict, List, Callable, Optional
 from collections import defaultdict
 from enum import Enum
@@ -209,7 +209,7 @@ class TaskPlanner:
     - State is checkpointed after each task (recoverable)
     """
     
-    def __init__(self, state_store_path: str = "harness_state.json"):
+    def __init__(self, state_store_path: str = "Hardness_state.json"):
         self.tasks: Dict[str, TaskNode] = {}
         self.graph = defaultdict(list)
         self.reverse_graph = defaultdict(list)
@@ -365,7 +365,7 @@ class TaskPlanner:
 
 | Layer | Content | Source | Priority |
 |-------|---------|--------|----------|
-| **Global** | Coding standards, architecture rules | `harness_rules.yaml` | Critical |
+| **Global** | Coding standards, architecture rules | `Hardness_rules.yaml` | Critical |
 | **Task** | Current task description and scope | User input + Planner | High |
 | **Retrieved** | Relevant code snippets via RAG | Vector DB (pgvector) | Medium |
 | **Memory** | Previous similar tasks/solutions | Task history DB | Low |
@@ -373,7 +373,7 @@ class TaskPlanner:
 #### 4.2.3 Core Implementation
 
 ```python
-# backend/app/harness/context_manager.py
+# backend/app/Hardness/context_manager.py
 from typing import Dict, List, Optional, Tuple
 import hashlib
 import json
@@ -418,7 +418,7 @@ class ContextManager:
         """
         return {
             "project": {
-                "name": "FastAPI-Vite-Harness",
+                "name": "FastAPI-Vite-Hardness",
                 "version": "1.0.0",
                 "description": "AI-assisted web application development"
             },
@@ -506,7 +506,7 @@ class ContextManager:
         scope = task_scope or self._determine_scope(task_description)
         
         context = {
-            "version": "harness_context_v2",
+            "version": "Hardness_context_v2",
             "scope": scope,
             "budget": {
                 "total_max": self.budget.total_max,
@@ -717,9 +717,9 @@ class ContextManager:
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_checkpoints_task ON harness_checkpoints(task_id, timestamp DESC);
+CREATE INDEX idx_checkpoints_task ON Hardness_checkpoints(task_id, timestamp DESC);
 
-CREATE TABLE harness_events (
+CREATE TABLE Hardness_events (
     event_id VARCHAR(64) PRIMARY KEY,
     task_id VARCHAR(64) NOT NULL,
     type VARCHAR(32) NOT NULL,
@@ -729,7 +729,7 @@ CREATE TABLE harness_events (
     UNIQUE(task_id, sequence)
 );
 
-CREATE INDEX idx_events_task_sequence ON harness_events(task_id, sequence);
+CREATE INDEX idx_events_task_sequence ON Hardness_events(task_id, sequence);
 
 -- Enable pgvector for semantic search
 CREATE EXTENSION IF NOT EXISTS vector;
@@ -908,7 +908,7 @@ This implements the principle: **"Strong constraints > Strong model"**
 #### 5.2.2 Core Implementation
 
 ```python
-# backend/app/harness/governance.py
+# backend/app/Hardness/governance.py
 from typing import Dict, List, Optional, Set, Callable
 from enum import Enum
 import asyncio
@@ -1327,7 +1327,7 @@ This ensures generated code meets production standards before being accepted.
 #### 7.1.2 Core Implementation
 
 ```python
-# backend/app/harness/evaluator.py
+# backend/app/Hardness/evaluator.py
 from typing import Dict, List, Optional
 from enum import Enum
 from dataclasses import dataclass
@@ -1774,13 +1774,13 @@ it cannot escape the container or access production systems.
 #### 8.1.2 Docker Configuration
 
 ```dockerfile
-# docker/harness-sandbox.Dockerfile
+# docker/Hardness-sandbox.Dockerfile
 FROM python:3.11-slim
 
 # Security: Create non-root user
-RUN groupadd -r harness && useradd -r -g harness -s /bin/bash harness && \
-    mkdir -p /workspace /tmp/harness && \
-    chown -R harness:harness /workspace /tmp/harness
+RUN groupadd -r Hardness && useradd -r -g Hardness -s /bin/bash Hardness && \
+    mkdir -p /workspace /tmp/Hardness && \
+    chown -R Hardness:Hardness /workspace /tmp/Hardness
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -1806,17 +1806,17 @@ RUN pip install --no-cache-dir \
     aiofiles==23.2.1
 
 # Copy sandbox policy
-COPY --chown=harness:harness docker/sandbox-policy.json /etc/harness/policy.json
+COPY --chown=Hardness:Hardness docker/sandbox-policy.json /etc/Hardness/policy.json
 
 # Set up workspace
 WORKDIR /workspace
-USER harness
+USER Hardness
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import sys; sys.exit(0)"
 
-CMD ["python", "-m", "harness.sandbox_worker"]
+CMD ["python", "-m", "Hardness.sandbox_worker"]
 ```
 
 #### 8.1.3 Seccomp Profile
@@ -1903,29 +1903,29 @@ CMD ["python", "-m", "harness.sandbox_worker"]
 ### 8.2 Docker Compose Configuration
 
 ```yaml
-# docker-compose.harness.yml
+# docker-compose.Hardness.yml
 version: "3.8"
 
 services:
   # === Control Plane ===
-  harness-orchestrator:
+  Hardness-orchestrator:
     build:
       context: .
-      dockerfile: docker/harness-orchestrator.Dockerfile
-    container_name: harness-orchestrator
+      dockerfile: docker/Hardness-orchestrator.Dockerfile
+    container_name: Hardness-orchestrator
     environment:
       - CLAUDE_API_KEY=${CLAUDE_API_KEY}
-      - DATABASE_URL=postgresql://harness:${DB_PASSWORD}@postgres:5432/harness
+      - DATABASE_URL=postgresql://Hardness:${DB_PASSWORD}@postgres:5432/Hardness
       - REDIS_URL=redis://redis:6379/0
       - SANDBOX_NETWORK=none
       - LOG_LEVEL=INFO
     volumes:
       - ./backend:/workspace/backend:ro
-      - harness-state:/data/state
-      - harness-logs:/data/logs
+      - Hardness-state:/data/state
+      - Hardness-logs:/data/logs
     networks:
-      - harness-internal
-      - harness-external
+      - Hardness-internal
+      - Hardness-external
     deploy:
       resources:
         limits:
@@ -1947,11 +1947,11 @@ services:
         condition: service_healthy
 
   # === Sandbox Worker ===
-  harness-sandbox:
+  Hardness-sandbox:
     build:
       context: .
-      dockerfile: docker/harness-sandbox.Dockerfile
-    container_name: harness-sandbox
+      dockerfile: docker/Hardness-sandbox.Dockerfile
+    container_name: Hardness-sandbox
     network_mode: none  # No external network access
     read_only: true     # Read-only root filesystem
     tmpfs:
@@ -1968,7 +1968,7 @@ services:
     security_opt:
       - no-new-privileges:true
       - seccomp:./docker/seccomp-profile.json
-      - apparmor:docker-harness-sandbox
+      - apparmor:docker-Hardness-sandbox
     cap_drop:
       - ALL
     cap_add:
@@ -1989,27 +1989,27 @@ services:
     environment:
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
-    command: ["python", "-m", "harness.sandbox_worker"]
+    command: ["python", "-m", "Hardness.sandbox_worker"]
 
   # === Frontend (Vite + React) ===
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: harness-frontend
+    container_name: Hardness-frontend
     ports:
       - "3000:3000"
     environment:
       - VITE_API_URL=http://localhost:8000
       - VITE_WS_URL=ws://localhost:8000
-      - VITE_APP_NAME=Harness Control Center
+      - VITE_APP_NAME=Hardness Control Center
     volumes:
       - ./frontend:/app:cached
       - /app/node_modules
     networks:
-      - harness-external
+      - Hardness-external
     depends_on:
-      - harness-orchestrator
+      - Hardness-orchestrator
     deploy:
       resources:
         limits:
@@ -2019,18 +2019,18 @@ services:
   # === Database ===
   postgres:
     image: pgvector/pgvector:pg16
-    container_name: harness-postgres
+    container_name: Hardness-postgres
     environment:
-      - POSTGRES_USER=harness
+      - POSTGRES_USER=Hardness
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=harness
+      - POSTGRES_DB=Hardness
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./docker/postgres/init:/docker-entrypoint-initdb.d
     networks:
-      - harness-internal
+      - Hardness-internal
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U harness -d harness"]
+      test: ["CMD-SHELL", "pg_isready -U Hardness -d Hardness"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -2043,12 +2043,12 @@ services:
   # === Cache ===
   redis:
     image: redis:7-alpine
-    container_name: harness-redis
+    container_name: Hardness-redis
     command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
     volumes:
       - redis-data:/data
     networks:
-      - harness-internal
+      - Hardness-internal
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -2063,7 +2063,7 @@ services:
   # === Reverse Proxy ===
   nginx:
     image: nginx:alpine
-    container_name: harness-nginx
+    container_name: Hardness-nginx
     ports:
       - "80:80"
       - "443:443"
@@ -2071,9 +2071,9 @@ services:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./docker/nginx/ssl:/etc/nginx/ssl:ro
     networks:
-      - harness-external
+      - Hardness-external
     depends_on:
-      - harness-orchestrator
+      - Hardness-orchestrator
       - frontend
     deploy:
       resources:
@@ -2082,9 +2082,9 @@ services:
           memory: 256M
 
 volumes:
-  harness-state:
+  Hardness-state:
     driver: local
-  harness-logs:
+  Hardness-logs:
     driver: local
   postgres-data:
     driver: local
@@ -2092,14 +2092,14 @@ volumes:
     driver: local
 
 networks:
-  harness-internal:
+  Hardness-internal:
     driver: bridge
     internal: true  # No external access
     ipam:
       config:
         - subnet: 172.20.0.0/16
 
-  harness-external:
+  Hardness-external:
     driver: bridge
     ipam:
       config:
@@ -2112,7 +2112,7 @@ networks:
 
 ### 9.1 React Components
 
-The frontend provides a real-time dashboard for monitoring and controlling the Harness system.
+The frontend provides a real-time dashboard for monitoring and controlling the Hardness system.
 Built with React 18, TypeScript, and Vite for optimal developer experience and performance.
 
 #### 9.1.1 Project Structure
@@ -2121,7 +2121,7 @@ Built with React 18, TypeScript, and Vite for optimal developer experience and p
 frontend/
 ├── src/
 │   ├── components/
-│   │   ├── HarnessDashboard.tsx      # Main dashboard
+│   │   ├── HardnessDashboard.tsx      # Main dashboard
 │   │   ├── TaskSubmissionForm.tsx    # New task creation
 │   │   ├── TaskCard.tsx              # Individual task display
 │   │   ├── TaskList.tsx              # Task queue visualization
@@ -2133,19 +2133,19 @@ frontend/
 │   │   └── EvaluationResults.tsx     # Test/lint results
 │   ├── hooks/
 │   │   ├── useWebSocket.ts           # WebSocket connection management
-│   │   ├── useHarnessState.ts        # Global state management
+│   │   ├── useHardnessState.ts        # Global state management
 │   │   ├── useTaskPolling.ts         # Polling for task updates
 │   │   └── useAuditLog.ts            # Audit log fetching
 │   ├── api/
-│   │   ├── harness.ts                # Auto-generated API client
+│   │   ├── Hardness.ts                # Auto-generated API client
 │   │   └── types.ts                  # TypeScript interfaces
 │   ├── store/
-│   │   └── harnessStore.ts           # Zustand state store
+│   │   └── HardnessStore.ts           # Zustand state store
 │   ├── utils/
 │   │   ├── formatters.ts             # Date/number formatting
 │   │   └── validators.ts             # Input validation
 │   ├── types/
-│   │   └── harness.ts                # Domain type definitions
+│   │   └── Hardness.ts                # Domain type definitions
 │   ├── App.tsx
 │   └── main.tsx
 ├── public/
@@ -2159,10 +2159,10 @@ frontend/
 #### 9.1.2 Main Dashboard Component
 
 ```typescript
-// frontend/src/components/HarnessDashboard.tsx
+// frontend/src/components/HardnessDashboard.tsx
 import { useState, useEffect, useCallback } from "react";
 import { useWebSocket } from "../hooks/useWebSocket";
-import { useHarnessStore } from "../store/harnessStore";
+import { useHardnessStore } from "../store/HardnessStore";
 import { TaskSubmissionForm } from "./TaskSubmissionForm";
 import { TaskList } from "./TaskList";
 import { ApprovalQueue } from "./ApprovalQueue";
@@ -2171,12 +2171,12 @@ import { AgentLoopVisualizer } from "./AgentLoopVisualizer";
 import { EvaluationResults } from "./EvaluationResults";
 import type {
   TaskStatus,
-  HarnessEvent,
+  HardnessEvent,
   ApprovalRequest,
   SystemMetrics
-} from "../types/harness";
+} from "../types/Hardness";
 
-export function HarnessDashboard() {
+export function HardnessDashboard() {
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("tasks");
   
@@ -2189,24 +2189,24 @@ export function HarnessDashboard() {
     addApproval,
     removeApproval,
     updateMetrics
-  } = useHarnessStore();
+  } = useHardnessStore();
   
   const { lastMessage, sendMessage, connectionStatus } = useWebSocket(
-    `ws://${import.meta.env.VITE_WS_URL}/api/v1/harness/ws/main`
+    `ws://${import.meta.env.VITE_WS_URL}/api/v1/Hardness/ws/main`
   );
   
   // Handle incoming WebSocket messages
   useEffect(() => {
     if (!lastMessage) return;
     try {
-      const event: HarnessEvent = JSON.parse(lastMessage.data);
-      handleHarnessEvent(event);
+      const event: HardnessEvent = JSON.parse(lastMessage.data);
+      handleHardnessEvent(event);
     } catch (error) {
       console.error("Failed to parse WebSocket message:", error);
     }
   }, [lastMessage]);
   
-  const handleHarnessEvent = useCallback((event: HarnessEvent) => {
+  const handleHardnessEvent = useCallback((event: HardnessEvent) => {
     switch (event.type) {
       case "task_started":
       case "task_updated":
@@ -2240,7 +2240,7 @@ export function HarnessDashboard() {
         break;
       
       case "error":
-        console.error("Harness Error:", event.payload.message);
+        console.error("Hardness Error:", event.payload.message);
         break;
     }
   }, [updateTask, addApproval, removeApproval, updateMetrics]);
@@ -2250,7 +2250,7 @@ export function HarnessDashboard() {
     
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/harness/tasks`,
+        `${import.meta.env.VITE_API_URL}/api/v1/Hardness/tasks`,
         {
           method: "POST",
           headers: {
@@ -2320,7 +2320,7 @@ export function HarnessDashboard() {
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white
                            flex items-center gap-2">
               <Shield className="w-8 h-8 text-blue-600" />
-              Harness Control Center
+              Hardness Control Center
             </h1>
             <ConnectionStatus status={connectionStatus} />
           </div>
@@ -2440,7 +2440,7 @@ export function HarnessDashboard() {
 
 ### 9.1 React Components
 
-The frontend provides a real-time dashboard for monitoring and controlling the Harness system.
+The frontend provides a real-time dashboard for monitoring and controlling the Hardness system.
 Built with React 18, TypeScript, and Vite for optimal developer experience and performance.
 
 #### 9.1.1 Project Structure
@@ -2449,7 +2449,7 @@ Built with React 18, TypeScript, and Vite for optimal developer experience and p
 frontend/
 ├── src/
 │   ├── components/
-│   │   ├── HarnessDashboard.tsx      # Main dashboard
+│   │   ├── HardnessDashboard.tsx      # Main dashboard
 │   │   ├── TaskSubmissionForm.tsx    # New task creation
 │   │   ├── TaskCard.tsx              # Individual task display
 │   │   ├── TaskList.tsx              # Task queue visualization
@@ -2461,19 +2461,19 @@ frontend/
 │   │   └── EvaluationResults.tsx     # Test/lint results
 │   ├── hooks/
 │   │   ├── useWebSocket.ts           # WebSocket connection management
-│   │   ├── useHarnessState.ts        # Global state management
+│   │   ├── useHardnessState.ts        # Global state management
 │   │   ├── useTaskPolling.ts         # Polling for task updates
 │   │   └── useAuditLog.ts            # Audit log fetching
 │   ├── api/
-│   │   ├── harness.ts                # Auto-generated API client
+│   │   ├── Hardness.ts                # Auto-generated API client
 │   │   └── types.ts                  # TypeScript interfaces
 │   ├── store/
-│   │   └── harnessStore.ts           # Zustand state store
+│   │   └── HardnessStore.ts           # Zustand state store
 │   ├── utils/
 │   │   ├── formatters.ts             # Date/number formatting
 │   │   └── validators.ts             # Input validation
 │   ├── types/
-│   │   └── harness.ts                # Domain type definitions
+│   │   └── Hardness.ts                # Domain type definitions
 │   ├── App.tsx
 │   └── main.tsx
 ├── public/
@@ -2487,10 +2487,10 @@ frontend/
 #### 9.1.2 Main Dashboard Component
 
 ```typescript
-// frontend/src/components/HarnessDashboard.tsx
+// frontend/src/components/HardnessDashboard.tsx
 import { useState, useEffect, useCallback } from "react";
 import { useWebSocket } from "../hooks/useWebSocket";
-import { useHarnessStore } from "../store/harnessStore";
+import { useHardnessStore } from "../store/HardnessStore";
 import { TaskSubmissionForm } from "./TaskSubmissionForm";
 import { TaskList } from "./TaskList";
 import { ApprovalQueue } from "./ApprovalQueue";
@@ -2499,12 +2499,12 @@ import { AgentLoopVisualizer } from "./AgentLoopVisualizer";
 import { EvaluationResults } from "./EvaluationResults";
 import type {
   TaskStatus,
-  HarnessEvent,
+  HardnessEvent,
   ApprovalRequest,
   SystemMetrics
-} from "../types/harness";
+} from "../types/Hardness";
 
-export function HarnessDashboard() {
+export function HardnessDashboard() {
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("tasks");
   
@@ -2517,24 +2517,24 @@ export function HarnessDashboard() {
     addApproval,
     removeApproval,
     updateMetrics
-  } = useHarnessStore();
+  } = useHardnessStore();
   
   const { lastMessage, sendMessage, connectionStatus } = useWebSocket(
-    `ws://${import.meta.env.VITE_WS_URL}/api/v1/harness/ws/main`
+    `ws://${import.meta.env.VITE_WS_URL}/api/v1/Hardness/ws/main`
   );
   
   // Handle incoming WebSocket messages
   useEffect(() => {
     if (!lastMessage) return;
     try {
-      const event: HarnessEvent = JSON.parse(lastMessage.data);
-      handleHarnessEvent(event);
+      const event: HardnessEvent = JSON.parse(lastMessage.data);
+      handleHardnessEvent(event);
     } catch (error) {
       console.error("Failed to parse WebSocket message:", error);
     }
   }, [lastMessage]);
   
-  const handleHarnessEvent = useCallback((event: HarnessEvent) => {
+  const handleHardnessEvent = useCallback((event: HardnessEvent) => {
     switch (event.type) {
       case "task_started":
       case "task_updated":
@@ -2568,7 +2568,7 @@ export function HarnessDashboard() {
         break;
       
       case "error":
-        console.error("Harness Error:", event.payload.message);
+        console.error("Hardness Error:", event.payload.message);
         break;
     }
   }, [updateTask, addApproval, removeApproval, updateMetrics]);
@@ -2578,7 +2578,7 @@ export function HarnessDashboard() {
     
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/harness/tasks`,
+        `${import.meta.env.VITE_API_URL}/api/v1/Hardness/tasks`,
         {
           method: "POST",
           headers: {
@@ -2648,7 +2648,7 @@ export function HarnessDashboard() {
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white
                            flex items-center gap-2">
               <Shield className="w-8 h-8 text-blue-600" />
-              Harness Control Center
+              Hardness Control Center
             </h1>
             <ConnectionStatus status={connectionStatus} />
           </div>
@@ -2771,7 +2771,7 @@ export function HarnessDashboard() {
 ```typescript
 // frontend/src/hooks/useWebSocket.ts
 import { useState, useEffect, useRef, useCallback } from "react";
-import type { HarnessEvent } from "../types/harness";
+import type { HardnessEvent } from "../types/Hardness";
 
 export type ConnectionStatus = "connecting" | "connected" | "disconnected" | "reconnecting";
 
@@ -2865,7 +2865,7 @@ export function useWebSocket(url: string): UseWebSocketReturn {
 #### 9.2.2 Zustand State Store
 
 ```typescript
-// frontend/src/store/harnessStore.ts
+// frontend/src/store/HardnessStore.ts
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import type {
@@ -2873,9 +2873,9 @@ import type {
   ApprovalRequest,
   SystemMetrics,
   AuditEntry
-} from "../types/harness";
+} from "../types/Hardness";
 
-interface HarnessState {
+interface HardnessState {
   tasks: Task[];
   pendingApprovals: ApprovalRequest[];
   systemMetrics: SystemMetrics;
@@ -2893,7 +2893,7 @@ interface HarnessState {
   setSelectedTask: (taskId: string | null) => void;
 }
 
-export const useHarnessStore = create<HarnessState>()(
+export const useHardnessStore = create<HardnessState>()(
   immer((set) => ({
     tasks: [],
     pendingApprovals: [],
@@ -2989,8 +2989,8 @@ This ensures type safety and automatic updates when the backend API changes.
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "generate-api": "openapi-typescript http://localhost:8000/openapi.json -o src/api/harness.ts",
-    "generate-api:prod": "openapi-typescript https://api.harness.example.com/openapi.json -o src/api/harness.ts",
+    "generate-api": "openapi-typescript http://localhost:8000/openapi.json -o src/api/Hardness.ts",
+    "generate-api:prod": "openapi-typescript https://api.Hardness.example.com/openapi.json -o src/api/Hardness.ts",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage"
@@ -3001,11 +3001,11 @@ This ensures type safety and automatic updates when the backend API changes.
 #### 9.3.2 Generated API Types
 
 ```typescript
-// frontend/src/api/harness.ts (auto-generated)
+// frontend/src/api/Hardness.ts (auto-generated)
 // Generated by openapi-typescript from FastAPI OpenAPI schema
 
 export interface paths {
-  "/api/v1/harness/tasks": {
+  "/api/v1/Hardness/tasks": {
     post: {
       requestBody: {
         content: {
@@ -3044,7 +3044,7 @@ export interface paths {
       };
     };
   };
-  "/api/v1/harness/tasks/{task_id}": {
+  "/api/v1/Hardness/tasks/{task_id}": {
     get: {
       parameters: {
         path: {
@@ -3070,7 +3070,7 @@ export interface paths {
       };
     };
   };
-  "/api/v1/harness/audit": {
+  "/api/v1/Hardness/audit": {
     get: {
       parameters: {
         query: {
@@ -3103,17 +3103,17 @@ export interface paths {
   };
 }
 
-export type TaskRequest = paths["/api/v1/harness/tasks"]["post"]["requestBody"]["content"]["application/json"];
-export type TaskResponse = paths["/api/v1/harness/tasks"]["post"]["responses"][200]["content"]["application/json"];
-export type TaskStatusResponse = paths["/api/v1/harness/tasks/{task_id}"]["get"]["responses"][200]["content"]["application/json"];
-export type AuditLogResponse = paths["/api/v1/harness/audit"]["get"]["responses"][200]["content"]["application/json"];
+export type TaskRequest = paths["/api/v1/Hardness/tasks"]["post"]["requestBody"]["content"]["application/json"];
+export type TaskResponse = paths["/api/v1/Hardness/tasks"]["post"]["responses"][200]["content"]["application/json"];
+export type TaskStatusResponse = paths["/api/v1/Hardness/tasks/{task_id}"]["get"]["responses"][200]["content"]["application/json"];
+export type AuditLogResponse = paths["/api/v1/Hardness/audit"]["get"]["responses"][200]["content"]["application/json"];
 ```
 
 #### 9.3.3 API Client Implementation
 
 ```typescript
 // frontend/src/api/client.ts
-import type { paths } from "./harness";
+import type { paths } from "./Hardness";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -3150,17 +3150,17 @@ async function fetchApi<T>(
   return response.json();
 }
 
-export const HarnessApi = {
+export const HardnessApi = {
   // Tasks
-  createTask: (data: paths["/api/v1/harness/tasks"]["post"]["requestBody"]["content"]["application/json"]) =>
-    fetchApi<paths["/api/v1/harness/tasks"]["post"]["responses"][200]["content"]["application/json"]>(
-      "/api/v1/harness/tasks",
+  createTask: (data: paths["/api/v1/Hardness/tasks"]["post"]["requestBody"]["content"]["application/json"]) =>
+    fetchApi<paths["/api/v1/Hardness/tasks"]["post"]["responses"][200]["content"]["application/json"]>(
+      "/api/v1/Hardness/tasks",
       { method: "POST", body: JSON.stringify(data) }
     ),
   
   getTaskStatus: (taskId: string) =>
-    fetchApi<paths["/api/v1/harness/tasks/{task_id}"]["get"]["responses"][200]["content"]["application/json"]>(
-      `/api/v1/harness/tasks/${taskId}`
+    fetchApi<paths["/api/v1/Hardness/tasks/{task_id}"]["get"]["responses"][200]["content"]["application/json"]>(
+      `/api/v1/Hardness/tasks/${taskId}`
     ),
   
   getAuditLog: (params?: {
@@ -3175,8 +3175,8 @@ export const HarnessApi = {
         if (value !== undefined) searchParams.append(key, String(value));
       });
     }
-    return fetchApi<paths["/api/v1/harness/audit"]["get"]["responses"][200]["content"]["application/json"]>(
-      `/api/v1/harness/audit?${searchParams.toString()}`
+    return fetchApi<paths["/api/v1/Hardness/audit"]["get"]["responses"][200]["content"]["application/json"]>(
+      `/api/v1/Hardness/audit?${searchParams.toString()}`
     );
   }
 };
@@ -3348,9 +3348,9 @@ export const HarnessApi = {
 
 ## 11. Key Engineering Principles
 
-### 11.1 Harness Engineering Philosophy
+### 11.1 Hardness Engineering Philosophy
 
-The core principle of Harness Engineering is that **the system determines the upper bound of capability, not the model**.
+The core principle of Hardness Engineering is that **the system determines the upper bound of capability, not the model**.
 This means investing in robust infrastructure, governance, and tooling rather than relying solely on the AI model's capabilities.
 
 ### 11.2 Design Principles
@@ -3577,7 +3577,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        harness: {
+        Hardness: {
           primary: {
             DEFAULT: "#2563eb",
             dark: "#1d4ed8",
@@ -3615,13 +3615,13 @@ class Settings(BaseSettings):
     """Application configuration."""
     
     # Application
-    APP_NAME: str = "Harness Control Plane"
+    APP_NAME: str = "Hardness Control Plane"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
     LOG_LEVEL: str = "INFO"
     
     # Database
-    DATABASE_URL: str = "postgresql://harness:harness@localhost:5432/harness"
+    DATABASE_URL: str = "postgresql://Hardness:Hardness@localhost:5432/Hardness"
     DATABASE_POOL_SIZE: int = 20
     DATABASE_MAX_OVERFLOW: int = 10
     
@@ -3634,7 +3634,7 @@ class Settings(BaseSettings):
     CLAUDE_MODEL: str = "claude-3-5-sonnet-20241022"
     MCP_SERVER_URL: str = "http://localhost:3001"
     
-    # Harness
+    # Hardness
     MAX_ITERATIONS: int = 5
     MAX_COST_PER_TASK: float = 5.0
     TASK_TIMEOUT_SECONDS: int = 300
@@ -3677,13 +3677,13 @@ def get_settings() -> Settings:
 ```bash
 # .env
 # Application
-APP_NAME=Harness Control Plane
+APP_NAME=Hardness Control Plane
 APP_VERSION=1.0.0
 DEBUG=false
 LOG_LEVEL=INFO
 
 # Database
-DATABASE_URL=postgresql://harness:${DB_PASSWORD}@postgres:5432/harness
+DATABASE_URL=postgresql://Hardness:${DB_PASSWORD}@postgres:5432/Hardness
 DATABASE_POOL_SIZE=20
 DATABASE_MAX_OVERFLOW=10
 
@@ -3696,7 +3696,7 @@ CLAUDE_API_KEY=sk-ant-api03-...
 CLAUDE_MODEL=claude-3-5-sonnet-20241022
 MCP_SERVER_URL=http://mcp-server:3001
 
-# Harness
+# Hardness
 MAX_ITERATIONS=5
 MAX_COST_PER_TASK=5.0
 TASK_TIMEOUT_SECONDS=300
@@ -3780,7 +3780,7 @@ http {
     limit_req_zone $binary_remote_addr zone=ws:10m rate=5r/s;
 
     upstream backend {
-        server harness-orchestrator:8000;
+        server Hardness-orchestrator:8000;
         keepalive 32;
     }
 
@@ -3866,7 +3866,7 @@ http {
 
 ## 13. Conclusion
 
-This Harness Engineering strategy provides a comprehensive framework for integrating Claude Code into a production-grade software development environment. By treating the AI agent as an operating system process with proper scheduling, memory, system calls, fault tolerance, security, and quality control, we achieve:
+This Hardness Engineering strategy provides a comprehensive framework for integrating Claude Code into a production-grade software development environment. By treating the AI agent as an operating system process with proper scheduling, memory, system calls, fault tolerance, security, and quality control, we achieve:
 
 1. **Reliability**: Tasks are idempotent, checkpointed, and recoverable
 2. **Security**: Sandboxed execution, permission controls, and audit trails
@@ -3875,7 +3875,7 @@ This Harness Engineering strategy provides a comprehensive framework for integra
 5. **Efficiency**: Token-optimized context management and automated feedback loops
 6. **Governance**: Human-in-the-loop for high-risk operations and immutable audit logs
 
-The key insight is that **the system architecture matters more than the model capabilities**. By building robust harness infrastructure, we enable Claude Code to operate safely and effectively within enterprise environments, transforming AI-assisted coding from a novelty into a reliable production tool.
+The key insight is that **the system architecture matters more than the model capabilities**. By building robust Hardness infrastructure, we enable Claude Code to operate safely and effectively within enterprise environments, transforming AI-assisted coding from a novelty into a reliable production tool.
 
 ---
 

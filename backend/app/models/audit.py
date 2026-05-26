@@ -6,7 +6,7 @@ from backend.app.db.session import Base
 
 
 class AuditEntry(Base):
-    __tablename__ = "harness_audit_log"
+    __tablename__ = "Hardness_audit_log"
 
     entry_id: Mapped[str] = mapped_column(
         String(64),

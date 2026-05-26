@@ -6,7 +6,7 @@ from backend.app.db.session import Base
 
 
 class Checkpoint(Base):
-    __tablename__ = "harness_checkpoints"
+    __tablename__ = "Hardness_checkpoints"
 
     id: Mapped[str] = mapped_column(
         String(64), primary_key=True, default=lambda: f"chk_{uuid.uuid4().hex[:12]}"
@@ -16,7 +16,7 @@ class Checkpoint(Base):
     state_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     task_status: Mapped[str] = mapped_column(String(32), nullable=False)
     error_log: Mapped[list] = mapped_column(JSON, default=list)
-    metadata: Mapped[dict] = mapped_column(JSON, default=dict)
+    checkpoint_metadata: Mapped[dict] = mapped_column("metadata", JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, nullable=False
     )

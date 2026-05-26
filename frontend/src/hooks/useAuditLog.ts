@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { HarnessApi } from "../api/client";
-import type { AuditEntry } from "../types/harness";
+import { HardnessApi } from "../api/client";
+import type { AuditEntry } from "../types/hardness";
 
 interface UseAuditLogOptions {
   sessionId?: string;
@@ -16,7 +16,7 @@ export function useAuditLogFetcher({ sessionId, limit = 100 }: UseAuditLogOption
   const fetchLog = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await HarnessApi.getAuditLog({
+      const result = await HardnessApi.getAuditLog({
         session_id: sessionId,
         limit,
       });

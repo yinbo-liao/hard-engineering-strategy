@@ -2,7 +2,7 @@ import os
 import tempfile
 
 import pytest
-from backend.app.harness.rag import CodeIndexer, SemanticSearcher, SearchResult
+from backend.app.hardness.rag import CodeIndexer, EmbeddingProvider, SemanticSearcher, SearchResult
 
 
 class TestCodeIndexer:
@@ -31,48 +31,82 @@ class TestCodeIndexer:
         assert "__pycache__" in indexer._EXCLUDE_DIRS
         assert "node_modules" in indexer._EXCLUDE_DIRS
 
-    def test_compute_embedding_dimensions(self, indexer):
-        emb = indexer._compute_embedding("test content")
-        assert len(emb) == 256
+    def test_embedding_dimensions(self, indexer):
+        provider = indexer.embedding_provider
+        emb = provider._fallback_embed("test content")
+        assert len(emb) == provider.dimensions
         assert all(0 <= v <= 1.0 for v in emb)
 
     def test_embedding_deterministic(self, indexer):
-        emb1 = indexer._compute_embedding("hello world")
-        emb2 = indexer._compute_embedding("hello world")
+        provider = indexer.embedding_provider
+        emb1 = provider._fallback_embed("hello world")
+        emb2 = provider._fallback_embed("hello world")
         assert emb1 == emb2
 
     def test_embedding_different_for_different_content(self, indexer):
-        emb1 = indexer._compute_embedding("hello")
-        emb2 = indexer._compute_embedding("world")
+        provider = indexer.embedding_provider
+        emb1 = provider._fallback_embed("hello")
+        emb2 = provider._fallback_embed("world")
         assert emb1 != emb2
 
     def test_cosine_similarity_identical(self, indexer):
-        emb = indexer._compute_embedding("test")
+        provider = indexer.embedding_provider
+        emb = provider._fallback_embed("test")
         sim = indexer._compute_cosine(emb, emb)
         assert sim == pytest.approx(1.0, abs=0.001)
 
     def test_cosine_similarity_zero_for_zeros(self, indexer):
-        zero = [0.0] * 256
+        dim = indexer.embedding_provider.dimensions
+        zero = [0.0] * dim
         sim = indexer._compute_cosine(zero, zero)
         assert sim == 0.0
+
+
+class TestEmbeddingProvider:
+    @pytest.fixture
+    def provider(self):
+        return EmbeddingProvider(dimensions=256)
+
+    def test_fallback_embed_deterministic(self, provider):
+        emb1 = provider._fallback_embed("hello")
+        emb2 = provider._fallback_embed("hello")
+        assert emb1 == emb2
+
+    def test_fallback_embed_dimensions(self, provider):
+        emb = provider._fallback_embed("test")
+        assert len(emb) == 256
+
+    @pytest.mark.asyncio
+    async def test_embed_uses_cache(self, provider):
+        emb1 = await provider.embed("cached content")
+        emb2 = await provider.embed("cached content")
+        assert emb1 == emb2
+
+    @pytest.mark.asyncio
+    async def test_embed_batch(self, provider):
+        contents = ["alpha", "beta", "gamma"]
+        embeddings = await provider.embed_batch(contents)
+        assert len(embeddings) == 3
+        assert all(len(e) == 256 for e in embeddings)
 
 
 class TestSemanticSearcher:
     @pytest.fixture
     def indexer(self):
-        from backend.app.harness.rag import IndexedFile
+        from backend.app.hardness.rag import IndexedFile
         idx = CodeIndexer()
+        provider = idx.embedding_provider
         idx.indexed_files["a.py"] = IndexedFile(
             file_path="a.py",
             content="async def get_users(): pass",
             content_hash="abc",
-            embedding=idx._compute_embedding("async def get_users(): pass"),
+            embedding=provider._fallback_embed("async def get_users(): pass"),
         )
         idx.indexed_files["b.py"] = IndexedFile(
             file_path="b.py",
             content="class UserDB:\n    def query(self): pass",
             content_hash="def",
-            embedding=idx._compute_embedding("class UserDB: query"),
+            embedding=provider._fallback_embed("class UserDB: query"),
         )
         return idx
 

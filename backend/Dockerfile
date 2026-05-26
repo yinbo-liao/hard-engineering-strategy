@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-RUN groupadd -r harness && useradd -r -g harness -s /bin/bash harness
+RUN groupadd -r hardness && useradd -r -g hardness -s /bin/bash hardness
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
@@ -9,12 +9,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
-RUN mkdir -p /workspace && chown -R harness:harness /workspace
+RUN mkdir -p /workspace && chown -R hardness:hardness /workspace
 
 COPY . /workspace/backend
 
 WORKDIR /workspace
-USER harness
+USER hardness
 
 ENV PYTHONPATH=/workspace
 ENV PYTHONDONTWRITEBYTECODE=1

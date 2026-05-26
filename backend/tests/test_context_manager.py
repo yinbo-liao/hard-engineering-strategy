@@ -1,5 +1,5 @@
 import pytest
-from backend.app.harness.context_manager import ContextManager, ContextBudget
+from backend.app.hardness.context_manager import ContextManager, ContextBudget
 
 
 class TestContextBudget:
@@ -50,7 +50,7 @@ class TestContextAssembly:
         cm = ContextManager()
         ctx = cm.build_context("add a FastAPI endpoint /users")
 
-        assert ctx["version"] == "harness_context_v2"
+        assert ctx["version"] == "Hardness_context_v2"
         assert ctx["scope"] == "api"
         assert "layers" in ctx
         assert "budget" in ctx

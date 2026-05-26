@@ -67,7 +67,7 @@ class RBACMiddleware(BaseHTTPMiddleware):
             "/docs",
             "/redoc",
             "/openapi.json",
-            "/api/v1/harness/ws/main",
+            "/api/v1/Hardness/ws/main",
         }
 
     async def dispatch(self, request: Request, call_next):

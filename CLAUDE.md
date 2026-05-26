@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is the **Harness Engineering** system — a control plane that transforms Claude Code from an interactive coding assistant into a managed, governable, recoverable agent. The master blueprint is `harness_engineering_strategy.md`.
+This is the **Hardness Engineering** system — a control plane that transforms Claude Code from an interactive coding assistant into a managed, governable, recoverable agent. The master blueprint is `Hardness_engineering_strategy.md`.
 
 ## Core Philosophy
 
-> **"The system (Harness) determines the upper bound of capability, not the model."**
+> **"The system (Hardness) determines the upper bound of capability, not the model."**
 
 ## Commands
 
@@ -19,24 +19,29 @@ python -m venv .venv && source .venv/bin/activate   # or .venv\Scripts\Activate.
 pip install -r requirements.txt
 uvicorn backend.app.main:app --reload --port 8000     # dev server
 
-# Frontend (not yet implemented — Phase 3)
+# Frontend
 cd frontend
 npm install
 npm run dev                                           # Vite dev server on :3000
+npm run build                                         # TypeScript check + production build
 
 # Testing
 cd backend
-pytest tests/ -v                                      # all tests
+pytest tests/ -v                                      # all tests (159 currently)
 pytest tests/test_planner.py -v                       # single test file
+pytest tests/ -q                                      # quick run
 
 # Docker
-docker-compose -f docker-compose.harness.yml up       # full stack
-docker-compose -f docker-compose.harness.yml up -d    # detached
+docker-compose -f docker-compose.Hardness.yml up       # full stack
+docker-compose -f docker-compose.Hardness.yml up -d    # detached
 
 # Alembic
 cd backend
 alembic upgrade head                                  # apply migrations
 alembic revision --autogenerate -m "description"      # new migration
+
+# Run backend dev server from project root
+.venv\Scripts\python.exe -m uvicorn backend.app.main:app --reload --port 8000
 ```
 
 ## Project Structure
@@ -46,7 +51,7 @@ backend/
   app/
     main.py              # FastAPI entry point (lifespan, CORS, routes, /health)
     config.py            # Pydantic Settings (all env vars)
-    harness/
+    Hardness/
       planner.py         # TaskPlanner: DAG + Kahn's topological sort, checkpoint recovery
       context_manager.py # ContextManager: 4-layer assembly with token budgets
       state_store.py     # StateStore: PG-backed checkpoints + event sourcing
@@ -62,10 +67,10 @@ backend/
       approvals.py       # POST /approvals/{id}/approve|deny
       ws.py              # WebSocket manager + /ws/main endpoint
     models/
-      task.py            # SQLAlchemy: harness_tasks
-      checkpoint.py      # SQLAlchemy: harness_checkpoints
-      event.py           # SQLAlchemy: harness_events (event sourcing)
-      audit.py           # SQLAlchemy: harness_audit_log
+      task.py            # SQLAlchemy: Hardness_tasks
+      checkpoint.py      # SQLAlchemy: Hardness_checkpoints
+      event.py           # SQLAlchemy: Hardness_events (event sourcing)
+      audit.py           # SQLAlchemy: Hardness_audit_log
       embedding.py       # SQLAlchemy: code_embeddings (pgvector)
     db/session.py        # Async SQLAlchemy engine + session factory
   alembic/               # Database migrations
@@ -74,8 +79,8 @@ backend/
     test_planner.py      # DAG ordering, cycle detection, idempotency, checkpoint recovery
     test_context_manager.py # scope detection, token budgeting, context assembly
 docker/
-  harness-orchestrator.Dockerfile
-  harness-sandbox.Dockerfile  # non-root user, seccomp, read-only root
+  Hardness-orchestrator.Dockerfile
+  Hardness-sandbox.Dockerfile  # non-root user, seccomp, read-only root
   nginx/nginx.conf            # reverse proxy: /api→orchestrator, /→frontend, /ws→WS
   postgres/init/              # pgvector extension init
   seccomp-profile.json        # syscall whitelist for sandbox
@@ -124,8 +129,18 @@ frontend/                # (Phase 3) React + Vite + TypeScript
 ## Implementation Status
 
 - [x] Phase 1: Foundation — 39 files, 28 tests
-- [x] Phase 2: Integration — 6 harness modules, 3 schema modules, 35 new tests (63 total)
+- [x] Phase 2: Integration — 6 Hardness modules, 3 schema modules, 35 new tests (63 total)
 - [x] Phase 3: Frontend — Vite + React + TypeScript dashboard, 14 components, Zustand store, WebSocket hook, API client
 - [x] Phase 4: Governance — Circular imports detection, test coverage checks, notification service (Slack/email), rate limiting middleware, RBAC/JWT middleware, RFC 7807 error handling, 25 new tests (88 total)
-- [x] Phase 5: Optimization — CodeIndexer + SemanticSearcher (pgvector RAG), TaskMemoryStore (similarity retrieval, tag index, LRU eviction), BenchmarkRunner (p50/p95/p99 percentiles, cost tracking), TokenOptimizer (compression, dedup, budget enforcement), 44 new tests (132 total)
+- [x] Phase 5: Optimization — CodeIndexer + SemanticSearcher (pgvector RAG with EmbeddingProvider), TaskMemoryStore (similarity retrieval, tag index, LRU eviction), BenchmarkRunner (p50/p95/p99 percentiles, cost tracking), TokenOptimizer (compression, dedup, budget enforcement), 44 new tests (132 total)
 - [x] Phase 6: Production — MetricsCollector (Prometheus), SecurityAuditor (secrets/deps/container/network), BackupManager (pg_dump/restore), production docker-compose, Nginx SSL/TLS, Grafana dashboard, Alertmanager, 23 new tests (155 total)
+- [x] Phase 7: Hardening — DB persistence in API routes, real embedding provider (API + fallback), token optimizer integration, session cleanup, Pydantic schema validation, frontend build hardening (159 tests total)
+
+## Known Gaps
+
+- **pgvector not functional**: The `code_embeddings` table uses `String` for the embedding column instead of pgvector `Vector` type. ANN search cannot happen at the DB level. A migration is needed to alter the column type.
+- **MCP client not integrated**: The `MCPClient` exists but is never called — the orchestrator calls Anthropic/OpenAI APIs directly.
+- **No WebSocket authentication**: `/ws/main` accepts connections without token validation. Add JWT validation on connect.
+- **Notification services**: `SlackNotificationService` and `EmailNotificationService` are implemented but only `LoggingNotificationService` is wired by default. Set `SLACK_WEBHOOK_URL` env var to enable Slack.
+- **Rate limiting in-memory**: Rate counters reset on restart. Use Redis for production.
+- **Frontend tests not yet implemented**: Test setup file exists but no test files written. Install `vitest` and `@testing-library/react` and add tests for store and key components.

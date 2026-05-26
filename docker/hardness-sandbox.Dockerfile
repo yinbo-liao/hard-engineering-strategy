@@ -1,8 +1,8 @@
 FROM python:3.11-slim
 
-RUN groupadd -r harness && useradd -r -g harness -s /bin/bash harness && \
-    mkdir -p /workspace /tmp/harness && \
-    chown -R harness:harness /workspace /tmp/harness
+RUN groupadd -r hardness && useradd -r -g hardness -s /bin/bash hardness && \
+    mkdir -p /workspace /tmp/hardness && \
+    chown -R hardness:hardness /workspace /tmp/hardness
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
@@ -25,13 +25,13 @@ RUN pip install --no-cache-dir \
     httpx==0.28.1 \
     aiofiles==24.1.0
 
-COPY docker/sandbox-policy.json /etc/harness/policy.json
-COPY --chown=harness:harness docker/sandbox-policy.json /etc/harness/policy.json
+COPY docker/sandbox-policy.json /etc/hardness/policy.json
+COPY --chown=hardness:hardness docker/sandbox-policy.json /etc/hardness/policy.json
 
 WORKDIR /workspace
-USER harness
+USER hardness
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import sys; sys.exit(0)"
 
-CMD ["python", "-m", "harness.sandbox_worker"]
+CMD ["python", "-m", "hardness.sandbox_worker"]

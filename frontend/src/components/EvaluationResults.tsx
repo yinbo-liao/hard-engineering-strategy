@@ -1,5 +1,5 @@
 import { CheckCircle2, XCircle, BarChart3 } from "lucide-react";
-import { useTask } from "../hooks/useHarnessState";
+import { useTask } from "../hooks/useHardnessState";
 import { formatPercent } from "../utils/formatters";
 
 interface EvaluationResultsProps {

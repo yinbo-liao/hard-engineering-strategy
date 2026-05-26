@@ -1,5 +1,5 @@
 import { Clock, RotateCw } from "lucide-react";
-import type { Task } from "../types/harness";
+import type { Task } from "../types/hardness";
 import { statusColor, formatDate, truncate } from "../utils/formatters";
 
 interface TaskCardProps {

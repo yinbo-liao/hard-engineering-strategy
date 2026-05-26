@@ -1,4 +1,4 @@
-import type { ApprovalRequest } from "../types/harness";
+import type { ApprovalRequest } from "../types/hardness";
 import { ApprovalCard } from "./ApprovalCard";
 
 interface ApprovalQueueProps {

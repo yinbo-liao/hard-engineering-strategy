@@ -11,7 +11,7 @@ from backend.app.db.session import Base
 # Import all models so Base.metadata is populated
 from backend.app.models.task import Task
 from backend.app.models.checkpoint import Checkpoint
-from backend.app.models.event import HarnessEvent
+from backend.app.models.event import HardnessEvent
 from backend.app.models.audit import AuditEntry
 from backend.app.models.embedding import CodeEmbedding
 

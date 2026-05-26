@@ -14,7 +14,7 @@ class TaskStatus(str, enum.Enum):
 
 
 class Task(Base):
-    __tablename__ = "harness_tasks"
+    __tablename__ = "Hardness_tasks"
 
     id: Mapped[str] = mapped_column(
         String(64), primary_key=True, default=lambda: f"task_{uuid.uuid4().hex[:12]}"

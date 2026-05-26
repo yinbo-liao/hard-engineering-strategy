@@ -1,5 +1,5 @@
 import pytest
-from backend.app.harness.notification import (
+from backend.app.hardness.notification import (
     Notification,
     LoggingNotificationService,
     CompositeNotificationService,

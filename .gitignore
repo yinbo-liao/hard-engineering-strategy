@@ -38,10 +38,10 @@ docker-compose.override.yml
 .DS_Store
 Thumbs.db
 
-# Harness
+# Hardness
 *.log
-harness_state.json
-harness_state.json.tmp
+hardness_state.json
+hardness_state.json.tmp
 
 # Test
 .coverage
@@ -52,7 +52,7 @@ coverage/
 # Alembic
 backend/alembic/versions/*.pyc
 
-# Harness-generated output files
+# Hardness-generated output files
 circle.svg
 merge_sort.py
 generated_api.py

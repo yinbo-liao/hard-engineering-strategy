@@ -5,7 +5,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        harness: {
+        Hardness: {
           primary: { DEFAULT: "#2563eb", dark: "#1d4ed8", light: "#3b82f6" },
           success: "#22c55e",
           warning: "#f59e0b",

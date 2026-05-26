@@ -1,6 +1,6 @@
 FROM node:22-alpine
 
-RUN addgroup -S harness && adduser -S harness -G harness
+RUN addgroup -S hardness && adduser -S hardness -G hardness
 
 WORKDIR /app
 
@@ -9,8 +9,8 @@ RUN npm ci --legacy-peer-deps
 
 COPY . .
 
-RUN chown -R harness:harness /app
-USER harness
+RUN chown -R hardness:hardness /app
+USER hardness
 
 EXPOSE 3000
 

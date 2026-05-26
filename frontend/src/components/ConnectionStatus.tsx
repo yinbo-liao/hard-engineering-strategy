@@ -1,4 +1,4 @@
-import type { ConnectionStatus as ConnectionStatusType } from "../types/harness";
+import type { ConnectionStatus as ConnectionStatusType } from "../types/hardness";
 
 const config: Record<ConnectionStatusType, { dot: string; label: string }> = {
   connected: { dot: "bg-green-500", label: "Connected" },

@@ -21,7 +21,7 @@ export function AuditLogViewer({ maxEntries = 50 }: AuditLogViewerProps) {
   const fetchLog = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/v1/harness/audit?limit=${maxEntries}`);
+      const res = await fetch(`/api/v1/Hardness/audit?limit=${maxEntries}`);
       if (res.ok) {
         const data = await res.json();
         setEntries(data.entries || []);

@@ -2,7 +2,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from backend.app.harness.errors import (
+from backend.app.hardness.errors import (
     problem_detail,
     validation_error,
     not_found,

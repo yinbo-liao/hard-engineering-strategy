@@ -1,5 +1,5 @@
 import pytest
-from backend.app.harness.planner import (
+from backend.app.hardness.planner import (
     TaskPlanner,
     TaskNode,
     TaskStatus,

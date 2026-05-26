@@ -1,5 +1,5 @@
 """
-Prometheus metrics for the Harness Control Plane.
+Prometheus metrics for the Hardness Control Plane.
 
 Tracks:
 - Task lifecycle (created, running, completed, failed)

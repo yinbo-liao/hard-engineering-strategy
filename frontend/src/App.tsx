@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { HarnessDashboard } from "./components/HarnessDashboard";
+import { HardnessDashboard } from "./components/HardnessDashboard";
 
 class ErrorBoundary extends Component<
   { children: React.ReactNode },
@@ -38,7 +38,7 @@ class ErrorBoundary extends Component<
 export default function App() {
   return (
     <ErrorBoundary>
-      <HarnessDashboard />
+      <HardnessDashboard />
     </ErrorBoundary>
   );
 }

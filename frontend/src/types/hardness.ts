@@ -65,7 +65,7 @@ export interface AuditEntry {
   riskLevel: string;
 }
 
-export interface HarnessEvent {
+export interface HardnessEvent {
   type: string;
   payload: {
     task_id?: string;

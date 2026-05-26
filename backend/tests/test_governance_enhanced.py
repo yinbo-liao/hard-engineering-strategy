@@ -1,5 +1,5 @@
 import pytest
-from backend.app.harness.governance import Governance
+from backend.app.hardness.governance import Governance
 
 
 class TestCircularImports:

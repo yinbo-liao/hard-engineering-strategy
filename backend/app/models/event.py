@@ -5,8 +5,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 from backend.app.db.session import Base
 
 
-class HarnessEvent(Base):
-    __tablename__ = "harness_events"
+class HardnessEvent(Base):
+    __tablename__ = "Hardness_events"
     __table_args__ = (UniqueConstraint("task_id", "sequence"),)
 
     event_id: Mapped[str] = mapped_column(
@@ -24,4 +24,4 @@ class HarnessEvent(Base):
 
     @staticmethod
     def idx_events_task_sequence():
-        return "CREATE INDEX IF NOT EXISTS idx_events_task_sequence ON harness_events(task_id, sequence)"
+        return "CREATE INDEX IF NOT EXISTS idx_events_task_sequence ON Hardness_events(task_id, sequence)"

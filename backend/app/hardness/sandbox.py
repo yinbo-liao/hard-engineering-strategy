@@ -17,7 +17,7 @@ class SandboxStatus(Enum):
 
 @dataclass
 class SandboxConfig:
-    image: str = "harness-sandbox:latest"
+    image: str = "Hardness-sandbox:latest"
     cpu_limit: str = "1"
     memory_limit: str = "2g"
     disk_limit_mb: int = 1024
@@ -62,8 +62,8 @@ class SandboxManager:
         self._workspace_base = tempfile.gettempdir()
 
     async def create_container(self, task_id: str) -> str:
-        container_name = f"harness-sandbox-{task_id}"
-        workspace = os.path.join(self._workspace_base, f"harness-{task_id}")
+        container_name = f"Hardness-sandbox-{task_id}"
+        workspace = os.path.join(self._workspace_base, f"Hardness-{task_id}")
         os.makedirs(workspace, exist_ok=True)
 
         cmd = [

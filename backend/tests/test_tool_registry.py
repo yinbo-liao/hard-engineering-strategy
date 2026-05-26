@@ -1,5 +1,5 @@
 import pytest
-from backend.app.harness.tool_registry import (
+from backend.app.hardness.tool_registry import (
     PermissionLevel,
     ToolRegistry,
     ToolSchema,

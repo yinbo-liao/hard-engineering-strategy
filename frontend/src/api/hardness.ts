@@ -1,5 +1,5 @@
 export interface paths {
-  "/api/v1/harness/tasks": {
+  "/api/v1/Hardness/tasks": {
     post: {
       requestBody: {
         content: {
@@ -26,7 +26,7 @@ export interface paths {
       };
     };
   };
-  "/api/v1/harness/tasks/{task_id}": {
+  "/api/v1/Hardness/tasks/{task_id}": {
     get: {
       parameters: { path: { task_id: string } };
       responses: {
@@ -48,7 +48,7 @@ export interface paths {
       };
     };
   };
-  "/api/v1/harness/audit": {
+  "/api/v1/Hardness/audit": {
     get: {
       parameters: {
         query: {
@@ -81,7 +81,7 @@ export interface paths {
   };
 }
 
-export type TaskRequest = paths["/api/v1/harness/tasks"]["post"]["requestBody"]["content"]["application/json"];
-export type TaskCreateResponse = paths["/api/v1/harness/tasks"]["post"]["responses"][200]["content"]["application/json"];
-export type TaskStatusResponse = paths["/api/v1/harness/tasks/{task_id}"]["get"]["responses"][200]["content"]["application/json"];
-export type AuditLogResponse = paths["/api/v1/harness/audit"]["get"]["responses"][200]["content"]["application/json"];
+export type TaskRequest = paths["/api/v1/Hardness/tasks"]["post"]["requestBody"]["content"]["application/json"];
+export type TaskCreateResponse = paths["/api/v1/Hardness/tasks"]["post"]["responses"][200]["content"]["application/json"];
+export type TaskStatusResponse = paths["/api/v1/Hardness/tasks/{task_id}"]["get"]["responses"][200]["content"]["application/json"];
+export type AuditLogResponse = paths["/api/v1/Hardness/audit"]["get"]["responses"][200]["content"]["application/json"];

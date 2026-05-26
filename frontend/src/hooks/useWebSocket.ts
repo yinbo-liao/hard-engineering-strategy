@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import type { HarnessEvent, ConnectionStatus } from "../types/harness";
+import type { HardnessEvent, ConnectionStatus } from "../types/hardness";
 
 interface UseWebSocketReturn {
   lastMessage: MessageEvent | null;

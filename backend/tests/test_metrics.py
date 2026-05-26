@@ -1,5 +1,5 @@
 import pytest
-from backend.app.harness.metrics import MetricsCollector, MetricValue
+from backend.app.hardness.metrics import MetricsCollector, MetricValue
 
 
 class TestMetricValue:

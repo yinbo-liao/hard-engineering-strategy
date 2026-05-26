@@ -4,8 +4,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List, Optional
 
-from backend.app.harness.planner import TaskNode
-from backend.app.harness.tool_registry import (
+from backend.app.hardness.planner import TaskNode
+from backend.app.hardness.tool_registry import (
     PermissionLevel,
     ToolExecutionResult,
     ToolRegistry,

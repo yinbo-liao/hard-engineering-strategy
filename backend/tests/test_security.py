@@ -2,7 +2,7 @@ import os
 import tempfile
 
 import pytest
-from backend.app.harness.security_audit import SecurityAuditor, Severity, SecurityFinding, AuditReport
+from backend.app.hardness.security_audit import SecurityAuditor, Severity, SecurityFinding, AuditReport
 
 
 class TestSecurityFinding:

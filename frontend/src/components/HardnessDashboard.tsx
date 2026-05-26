@@ -6,7 +6,7 @@ import {
   History,
 } from "lucide-react";
 import { useWebSocket } from "../hooks/useWebSocket";
-import { useHarnessStore } from "../store/harnessStore";
+import { useHardnessStore } from "../store/hardnessStore";
 import { TaskSubmissionForm } from "./TaskSubmissionForm";
 import { TaskList } from "./TaskList";
 import { ApprovalQueue } from "./ApprovalQueue";
@@ -18,20 +18,13 @@ import { ConnectionStatus } from "./ConnectionStatus";
 import { SystemMetricsBadge } from "./SystemMetricsBadge";
 import { UserMenu } from "./UserMenu";
 import { FilterButton } from "./FilterButton";
-import type { HarnessEvent, ApprovalRequest, SystemMetrics, Task } from "../types/harness";
-
-const DEFAULT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJvcGVyYXRvciIsInBlcm1pc3Npb24iOiJBRE1JTiIsInJvbGVzIjpbImFkbWluIl19.2X_RQjWIF7F85kD0PJx8L5vM3ZrNqKpA9bYcFdEhVmU";
+import type { HardnessEvent, ApprovalRequest, SystemMetrics, Task } from "../types/hardness";
 
 function getAuthToken(): string {
-  return localStorage.getItem("harness_auth_token") || "";
+  return localStorage.getItem("Hardness_auth_token") || "";
 }
 
-// Set auth token immediately (before any component renders)
-if (!localStorage.getItem("harness_auth_token")) {
-  localStorage.setItem("harness_auth_token", DEFAULT_TOKEN);
-}
-
-export function HarnessDashboard() {
+export function HardnessDashboard() {
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"tasks" | "approvals">("tasks");
 
@@ -44,23 +37,23 @@ export function HarnessDashboard() {
     addApproval,
     removeApproval,
     updateMetrics,
-  } = useHarnessStore();
+  } = useHardnessStore();
 
-  const wsUrl = `ws://127.0.0.1:8000/api/v1/harness/ws/main`;
+  const wsUrl = `ws://127.0.0.1:8000/api/v1/Hardness/ws/main`;
   const { lastMessage, sendMessage, connectionStatus } = useWebSocket(wsUrl);
 
   useEffect(() => {
     if (!lastMessage) return;
     try {
-      const event: HarnessEvent = JSON.parse(lastMessage.data);
-      handleHarnessEvent(event);
+      const event: HardnessEvent = JSON.parse(lastMessage.data);
+      handleHardnessEvent(event);
     } catch {
       // Ignore malformed messages
     }
   }, [lastMessage]);
 
-  const handleHarnessEvent = useCallback(
-    (event: HarnessEvent) => {
+  const handleHardnessEvent = useCallback(
+    (event: HardnessEvent) => {
       switch (event.type) {
         case "task_started":
         case "task_updated":
@@ -94,7 +87,7 @@ export function HarnessDashboard() {
           break;
 
         case "error":
-          console.error("Harness Error:", event.payload.message);
+          console.error("Hardness Error:", event.payload.message);
           break;
       }
     },
@@ -105,7 +98,7 @@ export function HarnessDashboard() {
   useEffect(() => {
     const poll = async () => {
       try {
-        const res = await fetch("/api/v1/harness/tasks");
+        const res = await fetch("/api/v1/Hardness/tasks");
         if (res.ok) {
           const data = await res.json();
           for (const t of data.tasks || []) {
@@ -122,7 +115,7 @@ export function HarnessDashboard() {
           });
         }
         if (selectedTask) {
-          const detail = await fetch(`/api/v1/harness/tasks/${selectedTask}`);
+          const detail = await fetch(`/api/v1/Hardness/tasks/${selectedTask}`);
           if (detail.ok) {
             const d = await detail.json();
             const r = (d.result && typeof d.result === "object") ? d.result : {};
@@ -154,7 +147,7 @@ export function HarnessDashboard() {
 
     try {
       const response = await fetch(
-        "/api/v1/harness/tasks",
+        "/api/v1/Hardness/tasks",
         {
           method: "POST",
           headers: {
@@ -213,7 +206,7 @@ export function HarnessDashboard() {
           <div className="flex items-center space-x-4">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <Shield className="w-8 h-8 text-blue-600" />
-              Harness Control Center
+              Hardness Control Center
             </h1>
             <ConnectionStatus status={connectionStatus} />
           </div>

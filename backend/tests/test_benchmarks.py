@@ -1,7 +1,7 @@
 import time
 
 import pytest
-from backend.app.harness.benchmarks import BenchmarkRunner, BenchmarkResult, CostBreakdown
+from backend.app.hardness.benchmarks import BenchmarkRunner, BenchmarkResult, CostBreakdown
 
 
 class TestBenchmarkResult:

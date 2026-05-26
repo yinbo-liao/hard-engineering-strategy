@@ -39,7 +39,7 @@ class ContextManager:
     def _build_global_rules(self) -> dict:
         return {
             "project": {
-                "name": "FastAPI-Vite-Harness",
+                "name": "FastAPI-Vite-Hardness",
                 "version": "1.0.0",
                 "description": "AI-assisted web application development",
             },
@@ -127,7 +127,7 @@ class ContextManager:
         scope = task_scope or self._determine_scope(task_description)
 
         context: dict = {
-            "version": "harness_context_v2",
+            "version": "Hardness_context_v2",
             "scope": scope,
             "budget": {
                 "total_max": self.budget.total_max,
@@ -166,6 +166,30 @@ class ContextManager:
             self.budget.total_max - context["budget"]["allocated"]
         )
 
+        # Apply token optimization to assembled context
+        context = self._apply_optimization(context, scope)
+
+        return context
+
+    def _apply_optimization(self, context: dict, scope: str) -> dict:
+        try:
+            from backend.app.hardness.token_optimizer import TokenOptimizer
+            optimizer = TokenOptimizer(max_tokens=self.budget.total_max)
+            optimized_layers, stats = optimizer.optimize_context(
+                layers=context.get("layers", {}),
+                scope=scope,
+                strategy="balanced",
+            )
+            context["layers"] = optimized_layers
+            context["optimization"] = {
+                "strategy": "balanced",
+                "saved_tokens": stats.saved_tokens,
+                "compression_ratio": stats.compression_ratio,
+            }
+            context["budget"]["allocated"] -= stats.saved_tokens
+            context["budget"]["remaining"] += stats.saved_tokens
+        except Exception:
+            pass  # Optimization is best-effort; skip on failure
         return context
 
     def _determine_scope(self, task: str) -> str:

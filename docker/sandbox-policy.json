@@ -6,7 +6,7 @@
   },
   "filesystem": {
     "read_only_root": true,
-    "writable_paths": ["/workspace", "/tmp/harness"],
+    "writable_paths": ["/workspace", "/tmp/Hardness"],
     "tmpfs": ["/tmp"],
     "denied_paths": ["/etc", "/root", "/home"]
   },
@@ -21,7 +21,7 @@
     "timeout_seconds": 300,
     "no_new_privileges": true,
     "allow_sudo": false,
-    "allowed_users": ["harness"]
+    "allowed_users": ["Hardness"]
   },
   "security": {
     "seccomp_profile": "seccomp-profile.json",

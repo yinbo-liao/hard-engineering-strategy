@@ -1,5 +1,5 @@
 """
-RFC 7807 Problem Details error handling for the Harness API.
+RFC 7807 Problem Details error handling for the Hardness API.
 """
 
 from typing import Any, Dict, Optional

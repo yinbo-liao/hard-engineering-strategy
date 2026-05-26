@@ -1,5 +1,5 @@
 import pytest
-from backend.app.harness.governance import (
+from backend.app.hardness.governance import (
     Governance,
     RiskLevel,
     ConstraintViolation,

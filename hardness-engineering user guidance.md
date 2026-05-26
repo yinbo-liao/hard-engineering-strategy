@@ -1,8 +1,8 @@
-# Harness Engineering — User Guidance
+# Hardness Engineering — User Guidance
 
-## What is Harness Engineering?
+## What is Hardness Engineering?
 
-Harness Engineering transforms Claude Code from an interactive coding assistant into a **managed, governable, and recoverable agent**. Instead of chatting with Claude, you submit tasks to a control plane that:
+Hardness Engineering transforms Claude Code from an interactive coding assistant into a **managed, governable, and recoverable agent**. Instead of chatting with Claude, you submit tasks to a control plane that:
 
 - Decomposes work into ordered tasks (DAG)
 - Supplies optimized context with token budgets
@@ -35,11 +35,11 @@ cp .env.example .env
 # Edit .env — set CLAUDE_API_KEY and a strong SECRET_KEY
 
 # 3. Start the full stack
-docker-compose -f docker-compose.harness.yml up -d
+docker-compose -f docker-compose.Hardness.yml up -d
 
 # 4. Verify
 curl http://localhost:8000/health
-# → {"status": "healthy", "app": "Harness Control Plane", "version": "1.0.0"}
+# → {"status": "healthy", "app": "Hardness Control Plane", "version": "1.0.0"}
 
 # 5. Open the dashboard
 # http://localhost:3000
@@ -145,7 +145,7 @@ The right panel shows an audit log of all actions, filterable by task. Every too
 ### Submit a Task
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/harness/tasks \
+curl -X POST http://localhost:8000/api/v1/Hardness/tasks \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{
@@ -160,28 +160,28 @@ curl -X POST http://localhost:8000/api/v1/harness/tasks \
 ### Check Task Status
 
 ```bash
-curl http://localhost:8000/api/v1/harness/tasks/task_abc123 \
+curl http://localhost:8000/api/v1/Hardness/tasks/task_abc123 \
   -H "Authorization: Bearer <token>"
 ```
 
 ### Query Audit Log
 
 ```bash
-curl "http://localhost:8000/api/v1/harness/audit?session_id=session_abc&limit=50" \
+curl "http://localhost:8000/api/v1/Hardness/audit?session_id=session_abc&limit=50" \
   -H "Authorization: Bearer <token>"
 ```
 
 ### List Pending Approvals
 
 ```bash
-curl http://localhost:8000/api/v1/harness/approvals \
+curl http://localhost:8000/api/v1/Hardness/approvals \
   -H "Authorization: Bearer <token>"
 ```
 
 ### Approve / Deny
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/harness/approvals/apr_xyz/approve \
+curl -X POST http://localhost:8000/api/v1/Hardness/approvals/apr_xyz/approve \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <token>" \
   -d '{"comment": "Reviewed and approved", "approver": "admin"}'
@@ -221,34 +221,34 @@ python -m pytest tests/ -q --tb=short      # Quiet with short tracebacks
 
 ```bash
 # Production stack includes Prometheus, Grafana, Alertmanager
-docker-compose -f docker-compose.harness.yml -f docker-compose.prod.yml up -d
+docker-compose -f docker-compose.Hardness.yml -f docker-compose.prod.yml up -d
 
 # Access services:
 # Dashboard:    https://your-host  (HTTP redirects to HTTPS)
 # Grafana:      http://your-host:3001  (admin/admin)
 # Prometheus:   http://your-host:9090  (internal only)
-# API:          https://your-host/api/v1/harness/...
+# API:          https://your-host/api/v1/Hardness/...
 ```
 
 ### Monitoring
 
 - **Grafana dashboard**: Pre-configured with task metrics, agent loop iterations, cost tracking, approval queue depth
-- **Alertmanager**: Routes critical alerts to Slack, all alerts to the harness webhook endpoint
+- **Alertmanager**: Routes critical alerts to Slack, all alerts to the Hardness webhook endpoint
 - **Metrics endpoint**: `/metrics` exposes Prometheus-format metrics
 - **Health check**: `/health` for load balancer readiness
 
 ### Backups
 
-The `BackupManager` in `backend/app/harness/backup.py` provides:
+The `BackupManager` in `backend/app/Hardness/backup.py` provides:
 
 ```python
-from backend.app.harness.backup import BackupManager
+from backend.app.Hardness.backup import BackupManager
 
 backup = BackupManager()
 
 # Create a full backup
 result = await backup.create_full_backup(label="pre-deploy")
-# → /data/backups/harness_backup_pre-deploy_20260518_120000.sql.gz
+# → /data/backups/Hardness_backup_pre-deploy_20260518_120000.sql.gz
 
 # Clean up backups older than 7 days
 removed = await backup.cleanup_old_backups(keep_days=7)
@@ -260,7 +260,7 @@ backups = await backup.list_backups()
 ### Security Audit
 
 ```python
-from backend.app.harness.security_audit import SecurityAuditor
+from backend.app.Hardness.security_audit import SecurityAuditor
 
 auditor = SecurityAuditor(root_path=".")
 report = await auditor.run_all()
@@ -277,14 +277,14 @@ print(f"Passed: {report.passed}")
 ### Task stuck in "running" state
 
 1. Check the Agent Loop Visualizer for the current phase
-2. Review the task's error log via `GET /api/v1/harness/tasks/{task_id}`
+2. Review the task's error log via `GET /api/v1/Hardness/tasks/{task_id}`
 3. If at max iterations (5), the task will auto-fail — submit a new task with more specific instructions
-4. For sandbox issues, check Docker logs: `docker logs harness-sandbox`
+4. For sandbox issues, check Docker logs: `docker logs Hardness-sandbox`
 
 ### WebSocket disconnects
 
 The dashboard automatically reconnects with exponential backoff (up to 5 attempts). If persistent:
-1. Check the orchestrator is running: `docker logs harness-orchestrator`
+1. Check the orchestrator is running: `docker logs Hardness-orchestrator`
 2. Verify the WebSocket URL in `.env` matches: `VITE_WS_URL=ws://localhost:8000`
 
 ### Tests are failing

@@ -1,4 +1,4 @@
-import type { paths } from "./harness";
+import type { paths } from "./hardness";
 
 const API_BASE_URL = "";
 
@@ -14,7 +14,7 @@ class ApiError extends Error {
 }
 
 function getAuthToken(): string {
-  return localStorage.getItem("harness_auth_token") || "";
+  return localStorage.getItem("Hardness_auth_token") || "";
 }
 
 async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -38,21 +38,21 @@ async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise
   return response.json();
 }
 
-export const HarnessApi = {
+export const HardnessApi = {
   createTask: (
-    data: paths["/api/v1/harness/tasks"]["post"]["requestBody"]["content"]["application/json"]
+    data: paths["/api/v1/Hardness/tasks"]["post"]["requestBody"]["content"]["application/json"]
   ) =>
     fetchApi<
-      paths["/api/v1/harness/tasks"]["post"]["responses"][200]["content"]["application/json"]
-    >("/api/v1/harness/tasks", {
+      paths["/api/v1/Hardness/tasks"]["post"]["responses"][200]["content"]["application/json"]
+    >("/api/v1/Hardness/tasks", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
   getTaskStatus: (taskId: string) =>
     fetchApi<
-      paths["/api/v1/harness/tasks/{task_id}"]["get"]["responses"][200]["content"]["application/json"]
-    >(`/api/v1/harness/tasks/${taskId}`),
+      paths["/api/v1/Hardness/tasks/{task_id}"]["get"]["responses"][200]["content"]["application/json"]
+    >(`/api/v1/Hardness/tasks/${taskId}`),
 
   getAuditLog: (params?: {
     session_id?: string;
@@ -67,8 +67,8 @@ export const HarnessApi = {
       });
     }
     return fetchApi<
-      paths["/api/v1/harness/audit"]["get"]["responses"][200]["content"]["application/json"]
-    >(`/api/v1/harness/audit?${searchParams.toString()}`);
+      paths["/api/v1/Hardness/audit"]["get"]["responses"][200]["content"]["application/json"]
+    >(`/api/v1/Hardness/audit?${searchParams.toString()}`);
   },
 };
 

@@ -11,7 +11,7 @@ class CodeEmbedding(Base):
     file_path: Mapped[str] = mapped_column(String(512), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     embedding: Mapped[str] = mapped_column(String, nullable=True)
-    metadata: Mapped[dict] = mapped_column(JSON, default=dict)
+    embedding_metadata: Mapped[dict] = mapped_column("metadata", JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, nullable=False
     )

@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import type { Task, ApprovalRequest, SystemMetrics, AuditEntry } from "../types/harness";
+import type { Task, ApprovalRequest, SystemMetrics, AuditEntry } from "../types/hardness";
 
-interface HarnessState {
+interface HardnessState {
   tasks: Task[];
   pendingApprovals: ApprovalRequest[];
   systemMetrics: SystemMetrics;
@@ -19,7 +19,7 @@ interface HarnessState {
   setSelectedTask: (taskId: string | null) => void;
 }
 
-export const useHarnessStore = create<HarnessState>()(
+export const useHardnessStore = create<HardnessState>()(
   immer((set) => ({
     tasks: [],
     pendingApprovals: [],

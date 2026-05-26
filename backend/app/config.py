@@ -5,13 +5,13 @@ from typing import Optional
 
 class Settings(BaseSettings):
     # Application
-    APP_NAME: str = "Harness Control Plane"
+    APP_NAME: str = "Hardness Control Plane"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
     LOG_LEVEL: str = "INFO"
 
     # Database
-    DATABASE_URL: str = "postgresql+asyncpg://harness:harness@localhost:5432/harness"
+    DATABASE_URL: str = "postgresql+asyncpg://Hardness:Hardness@localhost:5432/Hardness"
     DATABASE_POOL_SIZE: int = 20
     DATABASE_MAX_OVERFLOW: int = 10
 
@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     CLAUDE_MODEL: str = "claude-sonnet-4-6"
     MCP_SERVER_URL: str = "http://localhost:3001"
 
-    # Harness
+    # Hardness
     MAX_ITERATIONS: int = 5
     MAX_COST_PER_TASK: float = 5.0
     TASK_TIMEOUT_SECONDS: int = 300

@@ -9,14 +9,14 @@ from typing import Any, Dict, List, Optional
 import httpx
 
 from backend.app.config import get_settings
-from backend.app.harness.planner import TaskNode, TaskPlanner, TaskStatus
-from backend.app.harness.context_manager import ContextManager
-from backend.app.harness.tool_registry import (
+from backend.app.hardness.planner import TaskNode, TaskPlanner, TaskStatus
+from backend.app.hardness.context_manager import ContextManager
+from backend.app.hardness.tool_registry import (
     PermissionLevel,
     ToolExecutionResult,
     ToolRegistry,
 )
-from backend.app.harness.evaluator import Evaluator
+from backend.app.hardness.evaluator import Evaluator
 
 
 class LoopPhase(Enum):
@@ -74,6 +74,9 @@ class ClaudeCodeOrchestrator:
         session_id = f"session_{task.id}_{uuid.uuid4().hex[:8]}"
         session = SessionState(session_id=session_id, task_id=task.id)
         self.active_sessions[session_id] = session
+
+        # Evict sessions older than 1 hour
+        self._cleanup_stale_sessions()
 
         await self._emit("task_started", {"task_id": task.id, "session_id": session_id})
 
@@ -315,6 +318,7 @@ class ClaudeCodeOrchestrator:
         if response.status_code == 200:
             data = response.json()
             text = data["content"][0]["text"]
+            text = text.strip().removeprefix("```json").removesuffix("```").strip()
             try:
                 return json.loads(text)
             except json.JSONDecodeError:
@@ -323,6 +327,22 @@ class ClaudeCodeOrchestrator:
             "actions": [],
             "reasoning": f"API error {response.status_code}: {response.text[:200]}",
         }
+
+    def _cleanup_stale_sessions(self, max_age_seconds: int = 3600, max_sessions: int = 1000):
+        now = time.time()
+        stale = [
+            sid for sid, s in self.active_sessions.items()
+            if now - s.started_at > max_age_seconds
+        ]
+        for sid in stale:
+            del self.active_sessions[sid]
+
+        if len(self.active_sessions) > max_sessions:
+            sorted_sessions = sorted(
+                self.active_sessions.items(), key=lambda x: x[1].started_at
+            )
+            for sid, _ in sorted_sessions[:len(self.active_sessions) - max_sessions]:
+                del self.active_sessions[sid]
 
     def _update_context_with_feedback(
         self, context: dict, evaluation: dict, results: list

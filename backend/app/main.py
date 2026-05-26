@@ -1,12 +1,16 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.config import get_settings
-from backend.app.harness.metrics import MetricsCollector
-from backend.app.harness.middleware import RateLimitMiddleware, RBACMiddleware
-from backend.app.harness.errors import internal_error
+from backend.app.db.session import async_session_factory
+from backend.app.hardness.state_store import StateStore
+from backend.app.hardness.metrics import MetricsCollector
+from backend.app.hardness.middleware import RateLimitMiddleware, RBACMiddleware
+from backend.app.hardness.errors import internal_error
+from backend.app.hardness.mcp_server import MCPServer
 from backend.app.api.v1.tasks import router as tasks_router
 from backend.app.api.v1.audit import router as audit_router
 from backend.app.api.v1.approvals import router as approvals_router
@@ -15,8 +19,16 @@ from backend.app.api.v1.ws import router as ws_router
 settings = get_settings()
 
 
+async def get_state_store() -> StateStore:
+    """FastAPI dependency that yields a StateStore backed by a DB session."""
+    async with async_session_factory() as session:
+        store = StateStore(session)
+        yield store
+        await session.commit()
+
+
 def _register_tools(registry):
-    from backend.app.harness.tool_registry import ToolSchema, PermissionLevel
+    from backend.app.hardness.tool_registry import ToolSchema, PermissionLevel
     import os, tempfile
 
     async def read_file_impl(**kwargs):
@@ -109,30 +121,40 @@ _rbac_exempt = {
     "/docs",
     "/redoc",
     "/openapi.json",
-    "/api/v1/harness/ws/main",
-    "/api/v1/harness/tasks",
-    "/api/v1/harness/audit",
-    "/api/v1/harness/approvals",
+    "/mcp",
+    "/api/v1/Hardness/ws/main",
+    "/api/v1/Hardness/tasks",
+    "/api/v1/Hardness/audit",
+    "/api/v1/Hardness/approvals",
 }
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    from backend.app.harness.planner import TaskPlanner
-    from backend.app.harness.context_manager import ContextManager
-    from backend.app.harness.tool_registry import ToolRegistry
-    from backend.app.harness.governance import Governance
-    from backend.app.harness.evaluator import Evaluator
-    from backend.app.harness.orchestrator import ClaudeCodeOrchestrator
+    from backend.app.hardness.planner import TaskPlanner
+    from backend.app.hardness.context_manager import ContextManager
+    from backend.app.hardness.tool_registry import ToolRegistry
+    from backend.app.hardness.governance import Governance
+    from backend.app.hardness.evaluator import Evaluator
+    from backend.app.hardness.orchestrator import ClaudeCodeOrchestrator
+    from backend.app.hardness.notification import LoggingNotificationService
     from backend.app.api.v1.ws import manager as ws_manager
 
     app.state.settings = settings
     app.state.metrics = MetricsCollector()
-    app.state.governance = Governance()
+    app.state.session_factory = async_session_factory
+
+    notification_service = LoggingNotificationService()
+    if settings.SLACK_WEBHOOK_URL:
+        from backend.app.hardness.notification import SlackNotificationService
+        notification_service = SlackNotificationService(webhook_url=settings.SLACK_WEBHOOK_URL)
+
+    app.state.governance = Governance(notification_service=notification_service)
     app.state.tool_registry = ToolRegistry(governance=app.state.governance)
     _register_tools(app.state.tool_registry)
     app.state.context_manager = ContextManager()
     app.state.evaluator = Evaluator(app.state.tool_registry)
+    app.state.mcp_server = MCPServer(app.state.tool_registry)
     app.state.planner = TaskPlanner()
     app.state.orchestrator = ClaudeCodeOrchestrator(
         planner=app.state.planner,
@@ -142,6 +164,7 @@ async def lifespan(app: FastAPI):
         max_iterations=settings.MAX_ITERATIONS,
         max_cost_per_task=settings.MAX_COST_PER_TASK,
         websocket_manager=ws_manager,
+        notification_service=notification_service,
     )
     yield
 
@@ -176,10 +199,10 @@ async def global_exception_handler(request: Request, exc: Exception):
     return internal_error(request, str(exc))
 
 
-app.include_router(tasks_router, prefix="/api/v1/harness")
-app.include_router(audit_router, prefix="/api/v1/harness")
-app.include_router(approvals_router, prefix="/api/v1/harness")
-app.include_router(ws_router, prefix="/api/v1/harness")
+app.include_router(tasks_router, prefix="/api/v1/Hardness")
+app.include_router(audit_router, prefix="/api/v1/Hardness")
+app.include_router(approvals_router, prefix="/api/v1/Hardness")
+app.include_router(ws_router, prefix="/api/v1/Hardness")
 
 
 @app.get("/health")
@@ -188,11 +211,44 @@ async def health_check():
 
 
 @app.get("/metrics")
-async def metrics_endpoint():
-    from fastapi import Request as FR
-    return {"metrics": "ok"}
+async def metrics_endpoint(request: Request):
+    from fastapi.responses import PlainTextResponse
+    metrics = getattr(request.app.state, "metrics", None)
+    if metrics is None:
+        return {"metrics": "ok", "note": "Metrics collector not initialized"}
+    return PlainTextResponse(content=metrics.render_prometheus(), media_type="text/plain; charset=utf-8")
 
 
-@app.post("/api/v1/harness/alerts/webhook")
+@app.post("/api/v1/Hardness/alerts/webhook")
 async def alertmanager_webhook(body: dict):
     return {"status": "received", "alerts": len(body.get("alerts", []))}
+
+
+@app.post("/mcp")
+async def mcp_endpoint(request: Request):
+    """MCP (Model Context Protocol) JSON-RPC 2.0 endpoint.
+
+    Claude Code connects here to discover and invoke Hardness tools.
+    Supports: initialize, tools/list, tools/call, resources/list,
+              resources/read, prompts/list, prompts/get.
+    """
+    mcp_server = request.app.state.mcp_server
+    body = await request.json()
+    result = await mcp_server.handle_request(body)
+    return JSONResponse(content=result)
+
+
+@app.get("/mcp/sse")
+async def mcp_sse_endpoint(request: Request):
+    """MCP Server-Sent Events endpoint for streaming tool progress."""
+    from fastapi.responses import StreamingResponse
+    import asyncio
+
+    async def event_stream():
+        yield f"event: endpoint\ndata: /mcp\n\n"
+        yield f"event: heartbeat\ndata: {{\"status\":\"connected\"}}\n\n"
+        while True:
+            await asyncio.sleep(30)
+            yield f": heartbeat\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")

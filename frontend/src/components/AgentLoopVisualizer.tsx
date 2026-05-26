@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Brain, Play, Terminal, BarChart3, RefreshCw } from "lucide-react";
-import type { LoopPhase } from "../types/harness";
-import { useTask } from "../hooks/useHarnessState";
+import type { LoopPhase } from "../types/hardness";
+import { useTask } from "../hooks/useHardnessState";
 
 const phases: { key: LoopPhase; label: string; icon: typeof Brain }[] = [
   { key: "phase_reasoning", label: "Reason", icon: Brain },

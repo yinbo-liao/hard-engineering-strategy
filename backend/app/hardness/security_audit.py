@@ -1,5 +1,5 @@
 """
-Security audit scanner for the Harness Control Plane.
+Security audit scanner for the Hardness Control Plane.
 
 Checks:
 - Dependency vulnerabilities (safety check)
@@ -67,7 +67,7 @@ class AuditReport:
 
 class SecurityAuditor:
     """
-    Runs security checks on the harness deployment.
+    Runs security checks on the Hardness deployment.
 
     Categories:
     - dependency_scan — vulnerable packages
@@ -163,7 +163,7 @@ class SecurityAuditor:
 
     def check_container_config(self) -> List[SecurityFinding]:
         findings: list = []
-        compose_path = os.path.join(self.root_path, "docker-compose.harness.yml")
+        compose_path = os.path.join(self.root_path, "docker-compose.Hardness.yml")
 
         if not os.path.exists(compose_path):
             return findings
@@ -198,7 +198,7 @@ class SecurityAuditor:
 
     def check_network_config(self) -> List[SecurityFinding]:
         findings: list = []
-        compose_path = os.path.join(self.root_path, "docker-compose.harness.yml")
+        compose_path = os.path.join(self.root_path, "docker-compose.Hardness.yml")
 
         if not os.path.exists(compose_path):
             return findings
@@ -209,14 +209,14 @@ class SecurityAuditor:
         except OSError:
             return findings
 
-        if "harness-internal:\n    driver: bridge\n    internal: true" not in content:
+        if "Hardness-internal:\n    driver: bridge\n    internal: true" not in content:
             findings.append(
                 SecurityFinding(
                     id="NET-001",
                     category="network_exposure",
                     severity=Severity.HIGH,
                     description="Internal network should be isolated (internal: true)",
-                    remediation="Set internal: true on harness-internal bridge network",
+                    remediation="Set internal: true on Hardness-internal bridge network",
                 )
             )
 

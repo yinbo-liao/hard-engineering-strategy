@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Request, status
 
-from backend.app.harness.errors import not_found
+from backend.app.hardness.errors import not_found
 
 router = APIRouter()
 
