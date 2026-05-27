@@ -3,12 +3,12 @@ requires = ["setuptools>=70"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "hardness-plugin"
+name = "harness-plugin"
 version = "1.0.0"
-description = "Hardness Engineering: governance, evaluation, and task planning for Claude Code"
+description = "Harness Engineering: governance, evaluation, and task planning for Claude Code"
 requires-python = ">=3.11"
 license = {text = "MIT"}
-authors = [{name = "Hardness Engineering Team"}]
+authors = [{name = "Harness Engineering Team"}]
 keywords = ["claude-code", "governance", "ai-agent", "code-review", "plugin"]
 
 dependencies = [
@@ -29,11 +29,11 @@ dev = [
 ]
 
 [project.scripts]
-hardness = "hardness_plugin.cli:app"
+harness = "harness_plugin.cli:app"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["hardness_plugin*"]
+include = ["harness_plugin*"]
 
 [tool.black]
 line-length = 100

@@ -10,7 +10,7 @@ governance:
   - no_blocking_io_in_async
   require_approval_for: []
 project:
-  name: Hardness Engineering Strategy
+  name: Harness Engineering Strategy
   scope: general
 tools:
   disabled: []

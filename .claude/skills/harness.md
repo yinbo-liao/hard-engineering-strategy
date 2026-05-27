@@ -1,6 +1,6 @@
-# Hardness Engineering Skill
+# Harness Engineering Skill
 
-Use Hardness Engineering to enforce code quality, governance compliance,
+Use Harness Engineering to enforce code quality, governance compliance,
 and structured task planning within Claude Code sessions.
 
 ## When to Apply
@@ -14,11 +14,11 @@ and structured task planning within Claude Code sessions.
 
 | Command | Purpose |
 |---|---|
-| `/hardness:check` | Run governance constraint checks on changed files |
-| `/hardness:evaluate` | Multi-dimensional quality evaluation of generated code |
-| `/hardness:plan` | Decompose a complex task into DAG execution steps |
-| `/hardness:init` | Initialize `.hardness/config.yaml` for a project |
-| `/hardness:bench` | Run performance benchmarks on core modules |
+| `/harness:check` | Run governance constraint checks on changed files |
+| `/harness:evaluate` | Multi-dimensional quality evaluation of generated code |
+| `/harness:plan` | Decompose a complex task into DAG execution steps |
+| `/harness:init` | Initialize `.harness/config.yaml` for a project |
+| `/harness:bench` | Run performance benchmarks on core modules |
 
 ## Governance Rules (automatically enforced via hooks)
 
@@ -35,7 +35,7 @@ Rules 5-7 are checked via the evaluator's static analysis.
 
 ## Hook Automations
 
-PostToolUse hooks automatically run `hardness check --files <file>` on every Write/Edit.
+PostToolUse hooks automatically run `harness check --files <file>` on every Write/Edit.
 PreToolUse hooks run security scans before `git push`.
 No manual invocation needed for standard workflows.
 
@@ -43,19 +43,19 @@ No manual invocation needed for standard workflows.
 
 ```bash
 # Initialize per-project settings
-hardness init --scope api
+harness init --scope api
 
 # Check current project
-hardness check --path .
+harness check --path .
 
 # Evaluate code quality
-hardness evaluate --path src/
+harness evaluate --path src/
 
 # Plan a complex task
-hardness plan "Add user authentication with JWT and refresh tokens"
+harness plan "Add user authentication with JWT and refresh tokens"
 ```
 
-Per-project settings at `.hardness/config.yaml` control:
+Per-project settings at `.harness/config.yaml` control:
 - `governance.forbidden_patterns` — which rules to enforce
 - `evaluation.test_coverage_min` — minimum test coverage threshold
 - `tools.disabled` — which tools to disable

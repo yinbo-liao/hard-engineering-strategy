@@ -57,7 +57,7 @@ class TaskPlanner:
     - State is checkpointed atomically after each task completes
     """
 
-    def __init__(self, state_store_path: str = "Hardness_state.json"):
+    def __init__(self, state_store_path: str = "harness_state.json"):
         self.tasks: Dict[str, TaskNode] = {}
         self.graph: Dict[str, List[str]] = defaultdict(list)
         self.reverse_graph: Dict[str, List[str]] = defaultdict(list)

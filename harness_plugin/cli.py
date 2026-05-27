@@ -1,13 +1,13 @@
 """
-Hardness Plugin CLI — governance, evaluation, planning for Claude Code.
+Harness Plugin CLI — governance, evaluation, planning for Claude Code.
 
 Commands:
-  hardness init     Initialize .hardness/ config in current directory
-  hardness check    Run constraint checks against project code
-  hardness evaluate Run multi-dimensional quality evaluation
-  hardness plan     DAG task decomposition guidance
-  hardness bench    Run performance benchmarks
-  hardness metrics  Show/export session metrics
+  harness init     Initialize .harness/ config in current directory
+  harness check    Run constraint checks against project code
+  harness evaluate Run multi-dimensional quality evaluation
+  harness plan     DAG task decomposition guidance
+  harness bench    Run performance benchmarks
+  harness metrics  Show/export session metrics
 """
 
 import json
@@ -22,8 +22,8 @@ from rich.panel import Panel
 from rich.table import Table
 
 app = typer.Typer(
-    name="hardness",
-    help="Hardness Engineering: governance and evaluation for Claude Code",
+    name="harness",
+    help="Harness Engineering: governance and evaluation for Claude Code",
     no_args_is_help=True,
 )
 console = Console()
@@ -36,13 +36,13 @@ def init(
     force: bool = typer.Option(False, help="Overwrite existing config"),
     if_missing: bool = typer.Option(False, help="Only create if config doesn't exist"),
 ):
-    """Initialize .hardness/ configuration."""
-    from hardness_plugin.project_config import DEFAULT_CONFIG
+    """Initialize .harness/ configuration."""
+    from harness_plugin.project_config import DEFAULT_CONFIG
     import yaml
 
     project_root = Path(path).resolve()
-    hardness_dir = project_root / ".hardness"
-    config_file = hardness_dir / "config.yaml"
+    harness_dir = project_root / ".harness"
+    config_file = harness_dir / "config.yaml"
 
     if config_file.exists():
         if if_missing:
@@ -51,7 +51,7 @@ def init(
             console.print(f"[yellow]Config exists at {config_file}[/yellow]")
             return
 
-    hardness_dir.mkdir(parents=True, exist_ok=True)
+    harness_dir.mkdir(parents=True, exist_ok=True)
 
     config = dict(DEFAULT_CONFIG)
     config["project"]["name"] = project_root.name
@@ -69,8 +69,8 @@ def check(
     json_output: bool = typer.Option(False, "--json", help="Output JSON for machine parsing"),
 ):
     """Run constraint checks against the project code."""
-    from hardness_plugin.governance import Governance
-    from hardness_plugin.project_config import load_project_config, find_project_root
+    from harness_plugin.governance import Governance
+    from harness_plugin.project_config import load_project_config, find_project_root
 
     project_root = find_project_root(path) if path == "." else Path(path).resolve()
     config = load_project_config(project_root)
@@ -81,7 +81,7 @@ def check(
     if files:
         file_list = [Path(f.strip()) for f in files.split(",")]
     else:
-        exclude = {".git", "node_modules", "__pycache__", ".venv", "venv", ".hardness", ".claude"}
+        exclude = {".git", "node_modules", "__pycache__", ".venv", "venv", ".harness", ".claude"}
         for ext in (".py", ".ts", ".tsx", ".js", ".jsx", ".sql"):
             for f in project_root.rglob(f"*{ext}"):
                 if not any(p in f.parts for p in exclude):
@@ -136,13 +136,13 @@ def evaluate(
     json_output: bool = typer.Option(False, "--json", help="Output JSON"),
 ):
     """Run multi-dimensional quality evaluation on code files."""
-    from hardness_plugin.evaluator import evaluate_code_quality
+    from harness_plugin.evaluator import evaluate_code_quality
 
     target = Path(path).resolve()
     if target.is_file():
         py_files = [target] if target.suffix == ".py" else []
     else:
-        exclude = {".git", "node_modules", "__pycache__", ".venv", "venv", ".hardness", ".claude"}
+        exclude = {".git", "node_modules", "__pycache__", ".venv", "venv", ".harness", ".claude"}
         py_files = [f for f in target.rglob("*.py") if not any(p in f.parts for p in exclude)]
 
     if not py_files:
@@ -212,7 +212,7 @@ def plan(
             "step_4": "Execute in dependency order with checkpoints",
         },
         "code_example": {
-            "imports": "from hardness_plugin.planner import TaskPlanner, TaskNode",
+            "imports": "from harness_plugin.planner import TaskPlanner, TaskNode",
             "usage": (
                 "planner = TaskPlanner()\n"
                 "planner.add_task(TaskNode(id='1', description='Step one'))\n"
@@ -235,7 +235,7 @@ def plan(
             title="Task Planning Guide",
         ))
         console.print("\n[dim]Usage:[/dim]")
-        console.print("  from hardness_plugin.planner import TaskPlanner, TaskNode")
+        console.print("  from harness_plugin.planner import TaskPlanner, TaskNode")
         console.print("  planner = TaskPlanner()")
         console.print("  planner.add_task(TaskNode(id='step-1', description='...'))")
 
@@ -248,12 +248,12 @@ def bench(
     """Run performance benchmarks on core modules."""
     import asyncio
 
-    from hardness_plugin.benchmarks import BenchmarkRunner
-    from hardness_plugin.governance import Governance
-    from hardness_plugin.token_optimizer import TokenOptimizer
+    from harness_plugin.benchmarks import BenchmarkRunner
+    from harness_plugin.governance import Governance
+    from harness_plugin.token_optimizer import TokenOptimizer
 
     runner = BenchmarkRunner()
-    console.print("[bold]Hardness Performance Benchmarks[/bold]\n")
+    console.print("[bold]Harness Performance Benchmarks[/bold]\n")
 
     async def run():
         results = {}
@@ -310,7 +310,7 @@ def metrics(
     reset: bool = typer.Option(False, help="Reset all counters"),
 ):
     """Show or manage session metrics."""
-    from hardness_plugin.metrics import MetricsCollector
+    from harness_plugin.metrics import MetricsCollector
 
     collector = MetricsCollector()
 

@@ -1,8 +1,8 @@
-# Hardness Engineering — User Guidance
+# Harness Engineering — User Guidance
 
-## What is Hardness Engineering?
+## What is Harness Engineering?
 
-Hardness Engineering is a **Claude Code plugin** that enforces code quality, security, and governance constraints directly within your Claude Code sessions. It runs as a lightweight Python package — no servers, no databases, no Docker.
+Harness Engineering is a **Claude Code plugin** that enforces code quality, security, and governance constraints directly within your Claude Code sessions. It runs as a lightweight Python package — no servers, no databases, no Docker.
 
 **How it works:**
 
@@ -10,7 +10,7 @@ Hardness Engineering is a **Claude Code plugin** that enforces code quality, sec
 - **Slash commands** let you manually trigger evaluation, planning, and constraint checks
 - **A subagent** can be invoked for deep governance reviews
 
-**Core principle:** "The system (Hardness) determines the upper bound of capability, not the model."
+**Core principle:** "The system (Harness) determines the upper bound of capability, not the model."
 
 ---
 
@@ -25,12 +25,12 @@ Hardness Engineering is a **Claude Code plugin** that enforces code quality, sec
 
 ```bash
 # Clone and install
-git clone git@github.com:yinbo-liao/hardness-engineering-strategy.git
-cd hardness-engineering-strategy
+git clone git@github.com:yinbo-liao/harness-engineering-strategy.git
+cd harness-engineering-strategy
 pip install -e ".[dev]"
 
 # Verify
-hardness --help
+harness --help
 ```
 
 No Docker, no database, no Node.js required.
@@ -39,10 +39,10 @@ No Docker, no database, no Node.js required.
 
 ```bash
 # Create per-project configuration
-hardness init --scope api    # Options: api, ui, db, infra, test, security, general
+harness init --scope api    # Options: api, ui, db, infra, test, security, general
 ```
 
-This creates `.hardness/config.yaml` with governance rules and evaluation thresholds.
+This creates `.harness/config.yaml` with governance rules and evaluation thresholds.
 
 ---
 
@@ -54,39 +54,39 @@ Open a Claude Code session in your project and use:
 
 | Command | What it Does |
 |---------|-------------|
-| `/hardness:check` | Run governance constraint checks on changed files |
-| `/hardness:evaluate` | Multi-dimensional quality evaluation of generated code |
-| `/hardness:plan` | Decompose a complex task into DAG execution steps |
-| `/hardness:init` | Initialize `.hardness/config.yaml` for the current project |
+| `/harness:check` | Run governance constraint checks on changed files |
+| `/harness:evaluate` | Multi-dimensional quality evaluation of generated code |
+| `/harness:plan` | Decompose a complex task into DAG execution steps |
+| `/harness:init` | Initialize `.harness/config.yaml` for the current project |
 
 ### CLI Commands
 
 ```bash
 # Check your code against governance rules
-hardness check --path .
-hardness check --files src/auth.py --json    # Machine-readable output
+harness check --path .
+harness check --files src/auth.py --json    # Machine-readable output
 
 # Evaluate code quality (6 dimensions)
-hardness evaluate --path src/
-hardness evaluate --path src/ --json
+harness evaluate --path src/
+harness evaluate --path src/ --json
 
 # Plan a complex task
-hardness plan "Add user authentication with JWT and refresh tokens"
+harness plan "Add user authentication with JWT and refresh tokens"
 
 # Run performance benchmarks
-hardness bench --iterations 20
+harness bench --iterations 20
 
 # Session metrics
-hardness metrics --render
+harness metrics --render
 ```
 
 ### Automatic Hook Enforcement
 
-Once the plugin is installed and `.claude/settings.json` is present, Hardness runs automatically:
+Once the plugin is installed and `.claude/settings.json` is present, Harness runs automatically:
 
 - **After every Write/Edit** — governance constraint check on the modified file
 - **Before git push** — full security scan across all project files
-- **Session start** — ensures `.hardness/config.yaml` exists
+- **Session start** — ensures `.harness/config.yaml` exists
 
 No manual invocation needed for standard workflows.
 
@@ -140,7 +140,7 @@ When using the `tool_registry` module programmatically:
 For complex multi-step tasks, decompose work into a DAG with topological ordering:
 
 ```python
-from hardness_plugin.planner import TaskPlanner, TaskNode
+from harness_plugin.planner import TaskPlanner, TaskNode
 
 planner = TaskPlanner()
 planner.add_task(TaskNode(id="step-1", description="Set up project structure"))
@@ -158,28 +158,28 @@ order = planner.get_execution_order()  # ['step-1', 'step-2', 'step-3']
 Claude Code Session
     |
     ├── Hooks (.claude/settings.json)
-    |   ├── PostToolUse (Write/Edit) -> hardness check --files <file>
-    |   ├── PreToolUse (git push)    -> hardness check --scope security
-    |   └── SessionStart             -> hardness init --if-missing
+    |   ├── PostToolUse (Write/Edit) -> harness check --files <file>
+    |   ├── PreToolUse (git push)    -> harness check --scope security
+    |   └── SessionStart             -> harness init --if-missing
     |
-    ├── Skills (.claude/skills/hardness.md)
-    |   └── Slash commands: /hardness:check, /hardness:evaluate, /hardness:plan
+    ├── Skills (.claude/skills/harness.md)
+    |   └── Slash commands: /harness:check, /harness:evaluate, /harness:plan
     |
-    └── Agents (.claude/agents/hardness-governor.md)
+    └── Agents (.claude/agents/harness-governor.md)
         └── Governance subagent for deep review
 ```
 
 ### Python Package Structure
 
 ```
-hardness_plugin/
+harness_plugin/
 ├── governance.py        # Constraint engine (7 rules, audit, approval)
 ├── planner.py           # DAG task planner with topological sort
 ├── tool_registry.py     # 8-step controlled tool pipeline
 ├── evaluator.py         # 6-dimension quality assessment (static analysis)
 ├── token_optimizer.py   # Token budget management
 ├── task_memory.py       # In-memory solution store with similarity search
-├── project_config.py    # Per-project YAML config (.hardness/config.yaml)
+├── project_config.py    # Per-project YAML config (.harness/config.yaml)
 ├── benchmarks.py        # Performance benchmark runner
 ├── metrics.py           # Prometheus-format metrics collector
 ├── cli.py               # Typer CLI entry point
@@ -195,7 +195,7 @@ Only 4 packages: `pydantic`, `typer`, `rich`, `pyyaml`. No database, no web fram
 
 ## Per-Project Configuration
 
-### `.hardness/config.yaml`
+### `.harness/config.yaml`
 
 ```yaml
 project:
@@ -228,7 +228,7 @@ tools:
       "matcher": "Write|Edit",
       "hooks": [{
         "type": "command",
-        "command": "hardness check --files \"$CLAUDE_TOOL_INPUT_FILE_PATH\" --json",
+        "command": "harness check --files \"$CLAUDE_TOOL_INPUT_FILE_PATH\" --json",
         "timeout": 15000
       }]
     }],
@@ -236,7 +236,7 @@ tools:
       "matcher": "Bash\\(git push.*\\)",
       "hooks": [{
         "type": "command",
-        "command": "hardness check --path . --scope security --json",
+        "command": "harness check --path . --scope security --json",
         "timeout": 30000
       }]
     }]
@@ -251,7 +251,7 @@ tools:
 ### Import as a Python Library
 
 ```python
-from hardness_plugin import Governance, evaluate_code_quality, TaskPlanner, TaskNode
+from harness_plugin import Governance, evaluate_code_quality, TaskPlanner, TaskNode
 
 # Run constraint checks
 gov = Governance()
@@ -277,7 +277,7 @@ order = planner.get_execution_order()  # ['1', '2']
 ### Hook Handlers
 
 ```python
-from hardness_plugin.hooks import post_write_check, pre_push_check, evaluate_file
+from harness_plugin.hooks import post_write_check, pre_push_check, evaluate_file
 
 # After a file write
 result = post_write_check("src/auth.py", scope="api")
@@ -296,7 +296,7 @@ result = evaluate_file("src/auth.py")
 When you need a thorough governance review, invoke the subagent within Claude Code:
 
 ```
-/invoke hardness-governor "Review all files under src/ for security violations"
+/invoke harness-governor "Review all files under src/ for security violations"
 ```
 
 The subagent scans Python/TypeScript/SQL files, runs automated analysis, and outputs a structured governance report with severity levels and fix suggestions.
@@ -325,21 +325,21 @@ Each governance rule applies to specific project scopes:
 Terminal session:
 
 ```bash
-# 1. Initialize Hardness in your project
-$ hardness init --scope api
-Created .hardness/config.yaml
+# 1. Initialize Harness in your project
+$ harness init --scope api
+Created .harness/config.yaml
 
 # 2. Claude generates code in Claude Code session
 #    Claude writes: src/auth.py with JWT authentication
 
 # 3. Plugin auto-checks the file (PostToolUse hook)
-#    Behind the scenes: hardness check --files src/auth.py
+#    Behind the scenes: harness check --files src/auth.py
 
 # 4. Manually evaluate quality
-$ hardness evaluate --path src/auth.py
+$ harness evaluate --path src/auth.py
 
 # 5. Check governance before committing
-$ hardness check --path src/
+$ harness check --path src/
 No violations in 3 file(s)
 
 # 6. Commit and push
@@ -350,13 +350,13 @@ $ git push   # PreToolUse hook runs security scan before push
 Within Claude Code:
 
 ```
-/hardness:plan "Add JWT authentication with refresh tokens"
+/harness:plan "Add JWT authentication with refresh tokens"
 [Claude generates the implementation]
 
-/hardness:evaluate
+/harness:evaluate
 [Shows quality scores for generated files]
 
-/hardness:check
+/harness:check
 [Verifies no constraint violations]
 ```
 
@@ -367,7 +367,7 @@ Within Claude Code:
 ### Adding Custom Governance Rules
 
 ```python
-from hardness_plugin.governance import Governance, ConstraintRule, RiskLevel
+from harness_plugin.governance import Governance, ConstraintRule, RiskLevel
 
 gov = Governance()
 
@@ -401,11 +401,11 @@ result = gov.check_constraint("write_file", {"content": code}, "api")
 ### GitHub Actions
 
 ```yaml
-name: Hardness Check
+name: Harness Check
 on: [push, pull_request]
 
 jobs:
-  hardness:
+  harness:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -413,7 +413,7 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -e ".[dev]"
-      - run: hardness check --path . --scope security --json > report.json
+      - run: harness check --path . --scope security --json > report.json
       - name: Fail on violations
         run: |
           PASSED=$(python -c "import json; print(json.load(open('report.json'))['passed'])")
@@ -427,8 +427,8 @@ jobs:
 ```bash
 #!/bin/bash
 # .git/hooks/pre-commit
-hardness check --path . --scope api || {
-    echo "Hardness check failed. Fix violations before committing."
+harness check --path . --scope api || {
+    echo "Harness check failed. Fix violations before committing."
     exit 1
 }
 ```
@@ -446,7 +446,7 @@ pytest tests/test_governance.py -v
 pytest tests/test_evaluator.py -v
 
 # With coverage
-pytest tests/ --cov=hardness_plugin --cov-report=term
+pytest tests/ --cov=harness_plugin --cov-report=term
 ```
 
 ---
@@ -455,14 +455,14 @@ pytest tests/ --cov=hardness_plugin --cov-report=term
 
 ### Changes not being checked
 
-1. Verify the plugin is installed: `hardness --help`
+1. Verify the plugin is installed: `harness --help`
 2. Check `.claude/settings.json` exists with hook configurations
-3. Run manually: `hardness check --path .`
+3. Run manually: `harness check --path .`
 
 ### Excessive false positives
 
-1. Edit `.hardness/config.yaml` — remove rules from `governance.forbidden_patterns`
-2. Use `--scope` to narrow checks: `hardness check --scope api`
+1. Edit `.harness/config.yaml` — remove rules from `governance.forbidden_patterns`
+2. Use `--scope` to narrow checks: `harness check --scope api`
 
 ### Module not found
 
@@ -472,12 +472,12 @@ pip install -e ".[dev]"
 
 ### Subagent not found
 
-Verify `.claude/agents/hardness-governor.md` exists. Agent definitions load automatically when Claude Code opens the project.
+Verify `.claude/agents/harness-governor.md` exists. Agent definitions load automatically when Claude Code opens the project.
 
 ### JSON output parsing
 
 ```bash
-hardness check --files src/auth.py --json > report.json
+harness check --files src/auth.py --json > report.json
 python -c "import json; print(json.load(open('report.json')))"
 ```
 

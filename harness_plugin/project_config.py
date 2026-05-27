@@ -1,5 +1,5 @@
 """
-Per-project configuration loaded from .Hardness/config.yaml.
+Per-project configuration loaded from .harness/config.yaml.
 
 Enables each Claude Code project to have its own governance rules,
 evaluation thresholds, and tool permissions.
@@ -38,27 +38,27 @@ DEFAULT_CONFIG: Dict[str, Any] = {
 
 
 def find_project_root(start_path: Optional[str] = None) -> Path:
-    """Walk up from start_path to find a .Hardness/ directory."""
+    """Walk up from start_path to find a .harness/ directory."""
     current = Path(start_path or os.getcwd()).resolve()
     for parent in [current] + list(current.parents):
-        if (parent / ".Hardness").is_dir():
+        if (parent / ".harness").is_dir():
             return parent
     return Path(os.getcwd()).resolve()
 
 
 def load_project_config(project_root: Optional[str] = None) -> Dict[str, Any]:
     """
-    Load project configuration from .Hardness/config.yaml.
-    Falls back to env var Hardness_PROJECT_ROOT, then walks up from CWD.
+    Load project configuration from .harness/config.yaml.
+    Falls back to env var harness_PROJECT_ROOT, then walks up from CWD.
     Merges with DEFAULT_CONFIG so all keys have sensible defaults.
     """
-    root = project_root or os.environ.get("Hardness_PROJECT_ROOT")
+    root = project_root or os.environ.get("harness_PROJECT_ROOT")
     root_path = find_project_root(root) if root else find_project_root()
 
     config = dict(DEFAULT_CONFIG)
     config["project"]["name"] = root_path.name
 
-    config_file = root_path / ".Hardness" / "config.yaml"
+    config_file = root_path / ".harness" / "config.yaml"
     if config_file.exists():
         try:
             with open(config_file, encoding="utf-8") as f:

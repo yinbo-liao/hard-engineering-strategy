@@ -1,5 +1,5 @@
 import pytest
-from hardness_plugin.governance import (
+from harness_plugin.governance import (
     Governance,
     RiskLevel,
     ConstraintViolation,

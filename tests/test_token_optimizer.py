@@ -1,5 +1,5 @@
 import pytest
-from hardness_plugin.token_optimizer import TokenOptimizer, TokenStats
+from harness_plugin.token_optimizer import TokenOptimizer, TokenStats
 
 
 class TestTokenOptimizer:

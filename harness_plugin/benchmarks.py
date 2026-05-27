@@ -45,7 +45,7 @@ class CostBreakdown:
 
 class BenchmarkRunner:
     """
-    Performance benchmarking for Hardness operations.
+    Performance benchmarking for Harness operations.
 
     Measures:
     - Execution time percentiles (min, p50, p95, p99, max)

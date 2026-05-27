@@ -15,8 +15,8 @@ def post_write_check(file_path: str, scope: str = "auto") -> dict:
     Called by PostToolUse hook on Write/Edit tools.
     Returns a dict with 'passed' and 'violations' keys.
     """
-    from hardness_plugin.governance import Governance
-    from hardness_plugin.project_config import load_project_config
+    from harness_plugin.governance import Governance
+    from harness_plugin.project_config import load_project_config
 
     gov = Governance()
 
@@ -55,13 +55,13 @@ def pre_push_check(project_root: str = ".") -> dict:
     Called by PreToolUse hook on Bash(git push*) commands.
     Scans all Python/Typescript/SQL files for security violations.
     """
-    from hardness_plugin.governance import Governance
+    from harness_plugin.governance import Governance
 
     gov = Governance()
     root = Path(project_root).resolve()
     violations_found = []
 
-    exclude = {".git", "node_modules", "__pycache__", ".venv", "venv", ".hardness"}
+    exclude = {".git", "node_modules", "__pycache__", ".venv", "venv", ".harness"}
     for ext in (".py", ".ts", ".tsx", ".js", ".sql"):
         for fp in root.rglob(f"*{ext}"):
             if any(p in fp.parts for p in exclude):
@@ -92,7 +92,7 @@ def evaluate_file(file_path: str) -> dict:
 
     Called on-demand for detailed quality scoring.
     """
-    from hardness_plugin.evaluator import evaluate_code_quality
+    from harness_plugin.evaluator import evaluate_code_quality
 
     fp = Path(file_path)
     try:

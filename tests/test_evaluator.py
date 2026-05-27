@@ -1,5 +1,5 @@
 import pytest
-from hardness_plugin.evaluator import (
+from harness_plugin.evaluator import (
     evaluate_code_quality,
     EvaluationDimension,
     DimensionResult,

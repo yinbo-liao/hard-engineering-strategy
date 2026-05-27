@@ -1,5 +1,5 @@
 import pytest
-from hardness_plugin.tool_registry import (
+from harness_plugin.tool_registry import (
     PermissionLevel,
     ToolRegistry,
     ToolSchema,

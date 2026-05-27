@@ -1,5 +1,5 @@
 import pytest
-from hardness_plugin.planner import (
+from harness_plugin.planner import (
     TaskPlanner,
     TaskNode,
     TaskStatus,

@@ -1,5 +1,5 @@
 import pytest
-from hardness_plugin.task_memory import TaskMemoryStore, TaskMemoryEntry
+from harness_plugin.task_memory import TaskMemoryStore, TaskMemoryEntry
 
 
 class TestTaskMemoryEntry:
